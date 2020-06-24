@@ -1,4 +1,5 @@
 const configstore = require('conf');
+const utils = require('./utils');
 
 const confStore = new configstore();
 
