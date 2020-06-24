@@ -49,6 +49,7 @@
         "node-cron": "^2.0.3",
         "ora": "^4.0.4",
         "inquirer": "^7.1.0",
-        "inquirer-datepicker-prompt": "^0.4.2"
+        "inquirer-datepicker-prompt": "^0.4.2",
+        "omelette": "^0.4.12"
     }
 }
