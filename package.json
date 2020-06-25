@@ -50,6 +50,7 @@
         "ora": "^4.0.4",
         "inquirer": "^7.1.0",
         "inquirer-datepicker-prompt": "^0.4.2",
-        "omelette": "^0.4.12"
+        "omelette": "^0.4.12",
+        "mongoose": "^5.9.11"
     }
 }

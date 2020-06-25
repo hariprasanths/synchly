@@ -1,6 +1,7 @@
 const constants = require('./../utils/constants');
 const strings = require('./../utils/strings');
 const configstore = require('conf');
+const mongoDb = require('./mongoDb/mongoDb');
 
 const confStore = new configstore();
 
@@ -31,7 +32,7 @@ let connect = async (dbConfig) => {
     
     let resp;
     if (dbConfig.dbType == "MongoDB") {
-        
+        resp = await mongoDb.connect(dbConfig);
     } else if (dbConfig.dbType == "MySQL") {
         
     }
@@ -45,7 +46,7 @@ let dump = async (backupDirName) => {
     
     let resp;
     if (dbType == "MongoDB") {
-        
+        resp = await mongoDb.dump(configObj, backupDirName);
     } else if (dbType == "MySQL") {
         
     }
