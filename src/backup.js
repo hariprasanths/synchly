@@ -4,6 +4,7 @@ const constants = require('./utils/constants');
 const strings = require('./utils/strings');
 const files = require('./utils/files');
 const db = require('./database/database');
+const remoteSync = require('./remoteSync/remoteSync');
 const smtp = require('./smtp/smtp');
 
 const confStore = new configstore();
@@ -82,7 +83,10 @@ let backupDatabase = async () => {
 
     try{
         if(remoteSyncEnabled) {
-            // TODO: push backups to remote
+            let remoteUploadResp = await remoteSync.uploadFile(newBackupDir, newBackupPath);
+            for (let j = 0; j < deletedBackups.length; j++) {
+                let remoteDeleteResp = await remoteSync.deleteFile(deletedBackups[j]);
+            }
         }
     } catch (err) {
         isRemoteError = true;

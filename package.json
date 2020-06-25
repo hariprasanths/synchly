@@ -53,6 +53,6 @@
         "omelette": "^0.4.12",
         "mongoose": "^5.9.11",
         "nodemailer": "^6.4.6",
-        
+        "googleapis": "^49.0.0"
     }
 }
