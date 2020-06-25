@@ -1,6 +1,8 @@
 const inquirer = require('inquirer');
 const files = require('../utils/files');
 const configstore = require('conf');
+const gDriveInquirer = require('./gDrive/inquirer');
+const sftpInquirer = require('./sftp/inquirer');
 
 const confStore = new configstore();
 
@@ -19,10 +21,10 @@ let askConfig = async () => {
 
     let retObj = await inquirer.prompt(questions);
     if(retObj.remoteType == "Google Drive") {
-        
+        let gdConfig = await gDriveInquirer.askConfig();
         retObj = Object.assign(retObj, gdConfig);
     } else if (retObj.remoteType == "SFTP") {
-        
+        let sftpConfig = await sftpInquirer.askConfig();
         retObj = Object.assign(retObj, sftpConfig);
     }
     return retObj;

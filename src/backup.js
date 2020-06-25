@@ -112,7 +112,6 @@ let backupCheck = async (isDebug) => {
     const newBackupDir = getBackupDirName(currentDate);
     try {
         let cDate = new Date();
-        cDate.setDate(cDate.getDate() + counter);
         let deletedBackups = await backupDatabase(cDate);
 
         const statusReportLog = strings.statusReportLog(true, deletedBackups, undefined, true, undefined);

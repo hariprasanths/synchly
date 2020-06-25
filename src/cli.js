@@ -73,6 +73,7 @@ const cli = async (args) => {
 
         if(options.reset) {
             confStore.clear();
+            console.log(strings.resetSuccessLog);
         }
 
         if(!options.start && !options.disable && !options.enable 

@@ -77,13 +77,13 @@ let askConfig = async () => {
     questions.push({
         name: 'sftpBackupPath',
         type: 'input',
-        message: 'Enter the directory path for storing backups on the remote server:',
+        message: 'Enter the absolute path of the directory for storing backups on the remote server:',
         default: configObj.sftpBackupPath,
         validate: function (value) {
             if (value.length) {
                 return true;
             } else {
-                return 'Please enter the directory path for storing backups on the remote server.';
+                return 'Please enter the absolute path of the directory for storing backups on the remote server.';
             }
         }
     });

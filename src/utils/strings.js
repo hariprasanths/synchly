@@ -26,11 +26,13 @@ Options:
 
     const currentDateString = new Date().toDateString();
     const remoteStatus = confObj.remoteSyncEnabled;
+    const dbType = confObj.dbType;
+    const dbName = confObj.dbName;
     let retString = "<p>&nbsp;</p>";
 
     if(dbSuccess) {
 
-        retString += `<p>Backup of MySQL database bombsquad on ${currentDateString} completed successfully.</p>`;
+        retString += `<p>Backup of ${dbType} database ${dbName} on ${currentDateString} completed successfully.</p>`;
 
         if(removedDirs.length > 0) {
             removedDirs = removedDirs.map(d => {
@@ -39,7 +41,7 @@ Options:
                 d = new Date(d);
                 return d.toDateString();
             })
-            retString += `<p>Removed backup of MySQL database bombsquad on ${removedDirs}.</p>`;
+            retString += `<p>Removed backup of ${dbType} database ${dbName} on ${removedDirs}.</p>`;
         }
             
         retString += `<p>&nbsp;</p>
@@ -58,7 +60,7 @@ Options:
             retString += `<p>Disabled</p>`;
         }
     } else {
-        retString += `<p><span style="color: #ff0000;">Backup of MySQL database bombsquad on ${currentDateString} failed</span></p>
+        retString += `<p><span style="color: #ff0000;">Backup of ${dbType} database ${dbName} on ${currentDateString} failed</span></p>
         <p><strong>${dbError.name}:</strong> ${dbError.message}</p>
         <p><strong>Stacktrace:</strong></p>
         <p>${dbError}</p>`
@@ -77,11 +79,13 @@ const statusReportLog = (dbSuccess, removedDirs, dbError, remoteSuccess, remoteE
     const currentDateString = new Date().toDateString();
     const remoteSyncEnabled = confObj.remoteSyncEnabled;
     const smtpEnabled = confObj.smtpEnabled;
+    const dbType = confObj.dbType;
+    const dbName = confObj.dbName;
     let retString = "Daily Status Report:\n\n";
 
     if(dbSuccess) {
 
-        retString += `Backup of MySQL database bombsquad on ${currentDateString} completed successfully.\n`;
+        retString += `Backup of ${dbType} database ${dbName} on ${currentDateString} completed successfully.\n`;
 
         if(removedDirs.length > 0) {
             removedDirs = removedDirs.map(d => {
@@ -90,7 +94,7 @@ const statusReportLog = (dbSuccess, removedDirs, dbError, remoteSuccess, remoteE
                 d = new Date(d);
                 return d.toDateString();
             })
-            retString += `Removed backup of MySQL database bombsquad on ${removedDirs}.\n`;
+            retString += `Removed backup of ${dbType} database ${dbName} on ${removedDirs}.\n`;
         }
         
         retString += `\nRemote-Sync:\n`;
@@ -106,7 +110,7 @@ const statusReportLog = (dbSuccess, removedDirs, dbError, remoteSuccess, remoteE
             retString += `Disabled\n`;
         }
     } else {
-        retString += `Backup of MySQL database bombsquad on ${currentDateString} failed.\n${dbError.name}: ${dbError.message}\n`;
+        retString += `Backup of ${dbType} database ${dbName} on ${currentDateString} failed.\n${dbError.name}: ${dbError.message}\n`;
         retString += `Stacktrace:\n${dbError}\n`
     }
 
@@ -127,5 +131,6 @@ module.exports = {
     helpDesc,
     synchlyStartedDesc: "synchly waiting to take your backups...",
     statusReportTemplate,
-    statusReportLog
+    statusReportLog,
+    resetSuccessLog: "Reset all configurations successfull"
 }

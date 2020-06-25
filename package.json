@@ -18,6 +18,8 @@
     },
     "main": "src/backup.js",
     "scripts": {
+        "postinstall": "node scripts/postinstall.js",
+        "postuninstall": "node scripts/postuninstall.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "bin": {
