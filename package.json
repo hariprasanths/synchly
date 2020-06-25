@@ -51,6 +51,8 @@
         "inquirer": "^7.1.0",
         "inquirer-datepicker-prompt": "^0.4.2",
         "omelette": "^0.4.12",
-        "mongoose": "^5.9.11"
+        "mongoose": "^5.9.11",
+        "nodemailer": "^6.4.6",
+        
     }
 }

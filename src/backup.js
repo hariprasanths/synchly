@@ -3,10 +3,10 @@ const configstore = require('conf');
 const constants = require('./utils/constants');
 const strings = require('./utils/strings');
 const files = require('./utils/files');
+const db = require('./database/database');
+const smtp = require('./smtp/smtp');
 
 const confStore = new configstore();
-
-let counter = 0;
 
 const dtf = new Intl.DateTimeFormat('en', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
@@ -115,7 +115,8 @@ let backupCheck = async (isDebug) => {
         console.log(statusReportLog);
 
         if(smtpEnabled) {
-            // TODO: send status notification
+            const htmlBody = strings.statusReportTemplate(true, deletedBackups, undefined, true, undefined);
+            smtp.sendMailScheduler("Daily Status Report", htmlBody, isDebug);
         }
 
     } catch (err) {
@@ -136,7 +137,7 @@ let backupCheck = async (isDebug) => {
             } else {
                 htmlBody = strings.statusReportTemplate(false, [], err, false, undefined);
             }
-            // TODO: send status notification
+            smtp.sendMailScheduler("Daily Status Report", htmlBody, isDebug);
         }
     }
 }
