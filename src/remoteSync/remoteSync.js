@@ -2,6 +2,7 @@ const configstore = require('conf');
 const constants = require('./../utils/constants');
 const strings = require('./../utils/strings');
 const gDrive = require('./gDrive/gDrive');
+const sftp = require('./sftp/sftp');
 
 const confStore = new configstore();
 
@@ -36,7 +37,7 @@ let uploadFile = async (fileName, filePath) => {
     if (remoteType == 'Google Drive') {
         resp = await gDrive.uploadFile(fileName, filePath);
     } else if (remoteType == 'SFTP') {
-    
+        resp = await sftp.uploadFile(fileName, filePath);  
     }
     return resp;
 }
@@ -49,7 +50,7 @@ let deleteFile = async (fileName) => {
     if (remoteType == 'Google Drive') {
         resp = await gDrive.deleteFile(fileName);
     } else if (remoteType == 'SFTP') {
-        
+        resp = await sftp.deleteFile(fileName);
     }
     return resp;
 }

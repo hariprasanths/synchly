@@ -54,6 +54,7 @@
         "mongoose": "^5.9.11",
         "nodemailer": "^6.4.6",
         "googleapis": "^49.0.0",
-        "mysql": "^2.18.1"
+        "mysql": "^2.18.1",
+        "ssh2-sftp-client": "^5.1.2"
     }
 }
