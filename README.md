@@ -156,27 +156,38 @@ For running synchly as a daemon, refer [Running as a deamon](#running-as-a-daemo
 
 ## Running as a daemon
 
-Synchly can be run as a daemon, init conf and systemd service init file are bundled with the npm package to make this easier.
+Synchly can be run as a daemon, init.d and systemd unit files are bundled with the npm package to make this easier.
 
-### init.d
+### If installed using npm:
+
+#### init.d
 
 ```
-$ yarn global add synchly
-$ sudo cp ~/.config/yarn/global/node_modules/synchly/bin/synchly.conf /etc/init
+$ npm install --global synchly
+$ sudo cp /usr/local/lib/node_modules/synchly/bin/synchly.conf /etc/init
 $ sudo start synchly
 ```
 
-### systemd
+#### systemd
 
 ```
-$ yarn global add synchly
-$ cp ~/.config/yarn/global/node_modules/synchly/bin/synchly.service  ~/.config/systemd/user/
+$ npm install --global synchly
+$ cp /usr/local/lib/node_modules/synchly/bin/synchly.service  ~/.config/systemd/user/
 $ systemctl --user enable synchly
 $ systemctl --user start synchly
 ```
 
+If the unit files are not there inside `/usr/local/lib/node_modules`, use `npm root -g` to check get the global installation root path and copy the unit files from there.
+The `WorkingDirectory` field in the `synchly.service` unit file also needs to be changed, if the global installation root path is different from `/usr/local/lib/node_modules`.
 
-NOTE: Don't forget to restart the daemon everytime you make a change to the configuration using the [cli options](#list-of-options).
+### If installed using yarn:
+
+If installed using yarn global, the service init files will be located on 
+* `/usr/local/share/.config/yarn/global/node_modules/synchly/bin/` - if logged in as root
+* `~/.config/yarn/global/node_modules/synchly/bin` - if logged in as non-root
+
+
+**NOTE: Don't forget to restart the daemon everytime you make a change to the configuration using the [cli options](#list-of-options).**
 
 
 ## Examples

@@ -1,0 +1,21 @@
+# systemd unit file
+#
+# If placed in /etc/systemd/system
+# systemctl enable synchly.service
+# systemctl start synchly.service
+#
+# If placed in /etc/systemd/user or $HOME/.config/systemd/user
+# systemctl --user enable synchly.service
+# systemctl --user start synchly.service
+
+[Unit]
+Description=Synchly Backups
+Documentation=https://github.com/hariprasanths/synchly
+After=network.target
+
+[Service]
+WorkingDirectory=/usr/local/lib/node_modules/synchly/bin/
+ExecStart=/usr/bin/node synchly --start
+
+[Install]
+WantedBy=multi-user.target
