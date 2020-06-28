@@ -2,11 +2,23 @@
 
 const omelette = require('omelette');
 const completion = omelette('synchly').tree({
-    '--config': ['db', 'remote-sync', 'smtp'],
-    '--enable': ['remote-sync', 'smtp'],
-    '--disable': ['remote-sync', 'smtp'],
+    '--config': {
+        'db': ['--debug', '--stacktrace'],
+        'remote-sync': ['--debug', '--stacktrace'],
+        'smtp': ['--debug', '--stacktrace']
+    },
+    '--enable': {
+        'remote-sync': ['--debug', '--stacktrace'],
+        'smtp': ['--debug', '--stacktrace']
+    },
+    '--disable':  {
+        'remote-sync': ['--debug', '--stacktrace'],
+        'smtp': ['--debug', '--stacktrace']
+    },
     '--version':[],
     '--help':[],
+    '--start': [],
+    '--reset': [],
 });
 completion.init();
 

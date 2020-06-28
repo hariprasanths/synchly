@@ -6,21 +6,25 @@ const confStore = new configstore();
 const confObj = confStore.store;
 
 const usageInfo = `usage: synchly [--config module]
-usage: synchly [--disable module]
-usage: synchly [--enable module]
-usage: synchly [--help] 
+usage: synchly [--disable module] [--debug]
+usage: synchly [--enable module] [--stacktrace]
+usage: synchly [--help]
+usage: synchly [--reset]
+usage: synchly [--start]
 usage: synchly [--version]`;
 
 const helpDesc = `synchly - automate database backups \n
 ${usageInfo} \n
 Options:
-      --config=module           update module configuration (db, remote-sync, smtp)
-      --disable=module          disable a module (remote-sync, smtp)
-      --enable=module           enable a module (remote-sync, smtp)
-  -v, --version                 display version information and exit
-  -h, --help                    display help message and exit`;
-
-
+  -c, --config=module           create or update module configuration (db | remote-sync | smtp)
+  -d, --disable=module          disable a module (remote-sync | smtp)
+  -D, --debug                   prints even more information from CLI operations, used for debugging purposes
+  -e, --enable=module           enable a module (remote-sync | smtp)
+  -h, --help                    prints CLI reference information about options and their arguments
+      --reset                   reset all the configurations saved
+  -S, --stacktrace              prints even more information about errors from CLI operation, used for debugging purposes. If you find a bug, provide output generated with the --stacktrace or --debug flag on when submitting a bug report
+      --start                   start synchly instance which logs to stdout and stderr
+  -v, --version                 display version information and exit`;
 
   const statusReportTemplate = (dbSuccess, removedDirs, dbError, remoteSuccess, remoteError) => {
 

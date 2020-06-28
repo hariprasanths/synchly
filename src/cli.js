@@ -26,6 +26,10 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '-v': '--version',
             '-h': '--help',
             '-r': '--reset',
+            '-e': '--enable',
+            '-d': '--disable',
+            '-S': '--stacktrace',
+            '-D': '--debug'
         },
         {
             argv: rawArgs.slice(2),
@@ -74,11 +78,13 @@ const cli = async (args) => {
         if(options.reset) {
             confStore.clear();
             console.log(strings.resetSuccessLog);
+            return;
         }
 
         if(!options.start && !options.disable && !options.enable 
             && !options.help && !options.version && !options.config && !options.reset) {
             console.log(strings.usageInfo);
+            return;
         }
 
         if(options.config) {
