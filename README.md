@@ -1,18 +1,18 @@
 # Synchly backups
 
-* [Description](#-description)
-* [Features](#-features)
-* [Prequisites](#-prerequisites)
-* [Installation](#-installation)
-* [Tab completion](#-tab-completion)
-* [Usage](#-usage)
-* [Quick setup](#-quick-setup)
-* [List of options](#-list-of-options)
-* [Running as a deamon](#-running-as-a-deamon)
-* [Examples](#-examples)
-* [Contributing](#-contributing)
-* [Show your support](#-show-your-support)
-* [License](#-license)
+* [Description](#description)
+* [Features](#features)
+* [Prequisites](#prerequisites)
+* [Installation](#installation)
+* [Tab completion](#tab-completion)
+* [Usage](#usage)
+* [Quick setup](#quick-setup)
+* [List of options](#list-of-options)
+* [Running as a daemon](#running-as-a-daemon)
+* [Examples](#examples)
+* [Contributing](#contributing)
+* [Show your support](#show-your-support)
+* [License](#license)
 
 
 ## Description
@@ -20,17 +20,17 @@ Automate database backups with customizable recurring schedules.
 
 ## Features
 
-* **Backup scheme** - Synchly uses a [Grandfather-father-son backup rotaion scheme](https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son) (daily, weekly, monthly) that is fully customizable. <br/>Default schedule: 7 dailies + 8 weeklies + 6 monthlies (at max there will be 21 backups at a given instant).
-* **Flexible scheduling** - Schedule the daily backups to fit your maintenance and development schedule, so that you get a clear picture of your database backups overtime.
+* **Backup scheme** - Synchly uses a [Grandfather-father-son backup rotation scheme](https://en.wikipedia.org/wiki/Backup_rotation_scheme#Grandfather-father-son) (daily, weekly, monthly) that is fully customizable. <br/>Default schedule: 7 dailies + 8 weeklies + 6 monthlies (at max there will be 21 backups at a given instant).
+* **Flexible scheduling** - Schedule the daily backups to fit your maintenance and development schedule, so that you get a clear picture of your database backups over time.
 * **Supported Databases**
     * MySQL
     * MongoDB
 * **Compression** - Synchly compresses the database backups to save up space.
-* **Cloud Storage Integration** - Sync the local backups to a remote storage of your choice.
+* **Cloud Storage Integration** - Sync the local backups to remote storage of your choice.
 * **Supported remote storages**
     * Google Drive
     * SFTP
-* **Status notifications** - Get daily status reports for successful and failed backups, delivered when you want them via SMTP to the specified email(s). Check [Usage](#-usage) and the [List of Options](#-list-of-options) below.
+* **Status notifications** - Get daily status reports for successful and failed backups, delivered when you want them via SMTP to the specified email(s). Check [Usage](#usage) and the [List of Options](#list-of-options) below.
 
 ## Prerequisites
 
@@ -52,7 +52,7 @@ yarn global add synchly
 
 ## Tab completion
 
-The synchly package includes a useful tab completion feature. This feature is installed automatically after the installation of the package. However, you might need to restart console after installing the package for the autocomplete feature to work.
+The synchly package includes a useful tab-completion feature. This feature is installed automatically after the installation of the package. However, you might need to restart the console after installing the package for the autocomplete feature to work.
 
 If you use **Bash**, it will create a file at ~/.synchly/completion.sh and append a loader code to ~/.bash_profile file.
 
@@ -78,15 +78,16 @@ Synchly can be run with `--help` flag to get a full list of flags.
 
 The quickest way to get started is to run the `synchly --config=db` command:
 
-To start synchly use the command `synchly --start`.
+To start synchly use the command `synchly --start`.</br>
+Synchly instance have to be restarted everytime you make a change to the configuration using the [cli options](#list-of-options).
 
 Configuration of modules (remote-sync and smtp) can be added or updated using `synchly --config=module` command.
 
 By default, remote-sync and smtp modules are disabled, to enable them, use `synchly --enable=module` command.
 
-For the complete list of options and their behaviour, refer [List of options](#-list-of-options).
+For the complete list of options and their behavior, refer [List of options](#list-of-options).
 
-For running synchly as a daemon, refer [Running as a deamon](#-running-as-a-deamon).
+For running synchly as a daemon, refer [Running as a deamon](#running-as-a-daemon).
 
 ## List of options
 
@@ -153,7 +154,7 @@ For running synchly as a daemon, refer [Running as a deamon](#-running-as-a-deam
 </tbody>
 </table>
 
-## Running as a deamon
+## Running as a daemon
 
 Synchly can be run as a daemon, init conf and systemd service init file are bundled with the npm package to make this easier.
 
@@ -174,6 +175,10 @@ $ systemctl --user enable synchly
 $ systemctl --user start synchly
 ```
 
+
+NOTE: Don't forget to restart the daemon everytime you make a change to the configuration using the [cli options](#list-of-options).
+
+
 ## Examples
 
 * [Database configuration](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#database-configuration)
@@ -183,6 +188,10 @@ $ systemctl --user start synchly
     * [Google Drive](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#google-drive)
     * [SFTP](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#sftp)
 * [Status notifications (smtp) configuration](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#status-notifications-smtp-configuration)
+    * [Using Gmail](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#using-gmail)
+* [Enabling modules](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#enabling-modules)
+* [Disabling modules](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#disabling-modules)
+* [Stacktrace of errors](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#stacktrace-of-errors)
 
 ## Contributing
 
