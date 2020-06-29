@@ -29,6 +29,11 @@
     "engines": {
         "node": ">=8"
     },
+    "files": [
+        "/bin",
+        "/scripts",
+        "/src"
+    ],
     "preferGlobal": true,
     "keywords": [
         "cli",
