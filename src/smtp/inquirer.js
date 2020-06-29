@@ -8,9 +8,8 @@ const smtp = require('./smtp');
 const confStore = new configstore();
 
 let askConfig = async () => {
-
     const configObj = confStore.store;
-    
+
     inquirer.registerPrompt('datetime', require('inquirer-datepicker-prompt'));
 
     let questions = [];
@@ -18,14 +17,14 @@ let askConfig = async () => {
         name: 'smtpHost',
         type: 'input',
         message: 'Enter your SMTP hostname:',
-        default: configObj.smtpHost, 
+        default: configObj.smtpHost,
         validate: function (value) {
             if (value.length) {
                 return true;
             } else {
                 return 'Please enter the SMTP hostname.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -34,7 +33,7 @@ let askConfig = async () => {
         message: 'Enter your SMTP port:',
         default: configObj.smtpPort,
         choices: [465, 587, 25],
-        default: 465
+        default: 465,
     });
 
     questions.push({
@@ -48,7 +47,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the SMTP username.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -63,7 +62,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the SMTP password.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -73,13 +72,12 @@ let askConfig = async () => {
         default: configObj.smtpSenderMail,
         validate: function (value) {
             if (value.length) {
-                if(!smtp.validateEmail(value))
-                    return "Please enter a valid sender e-mail."
+                if (!smtp.validateEmail(value)) return 'Please enter a valid sender e-mail.';
                 return true;
             } else {
                 return 'Please enter the SMTP sender e-mail.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -89,16 +87,15 @@ let askConfig = async () => {
         default: configObj.smtpRecipientMail,
         validate: function (value) {
             if (value.length) {
-                if(!smtp.validateEmail(value))
-                    return "Please enter a valid recipient e-mail."
+                if (!smtp.validateEmail(value)) return 'Please enter a valid recipient e-mail.';
                 return true;
             } else {
                 return 'Please enter the SMTP recipient e-mail.';
             }
-        }
+        },
     });
 
-    const smtpNotifyTimeString = configObj.smtpNotifyTime ||  '1970-01-01 00:00';
+    const smtpNotifyTimeString = configObj.smtpNotifyTime || '1970-01-01 00:00';
 
     questions.push({
         type: 'datetime',
@@ -109,21 +106,21 @@ let askConfig = async () => {
     });
 
     let smtpConfig = await inquirer.prompt(questions);
-    
+
     let smtpConnStatus = ora('Authenticating you, please wait...');
     try {
         smtpConnStatus.start();
         const testEmailSub = `SMTP configuration updation successfull`;
         const testEmailBody = `Status notifications will be sent everyday to:<br/> ${smtpConfig.smtpRecipientMail}`;
         const smtpConnRes = await smtp.sendMail(testEmailSub, testEmailBody, smtpConfig);
-        smtpConnStatus.succeed("Authentication success");
+        smtpConnStatus.succeed('Authentication success');
         return smtpConfig;
     } catch (e) {
-        smtpConnStatus.fail("Authentication failed");
+        smtpConnStatus.fail('Authentication failed');
         throw e;
     }
-}
+};
 
 module.exports = {
-    askConfig
-}
+    askConfig,
+};

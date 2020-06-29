@@ -5,25 +5,21 @@ const path = require('path');
 const confStore = new configstore();
 
 const init = (sftpConfig = undefined) => {
-
-    if(!sftpConfig)
-        sftpConfig = confStore.store;
+    if (!sftpConfig) sftpConfig = confStore.store;
 
     const config = {
         host: sftpConfig.sftpHost,
         port: sftpConfig.sftpPort,
         username: sftpConfig.sftpAuthUser,
-        password: sftpConfig.sftpAuthPwd
+        password: sftpConfig.sftpAuthPwd,
     };
 
     return config;
 };
 
 const exists = async (sftpConfig = undefined) => {
+    if (!sftpConfig) sftpConfig = confStore.store;
 
-    if(!sftpConfig)
-        sftpConfig = confStore.store;
-    
     const config = init(sftpConfig);
     let sftp = new client();
     let existsRes;
@@ -31,25 +27,23 @@ const exists = async (sftpConfig = undefined) => {
     try {
         let connectRes = await sftp.connect(config);
         existsRes = await sftp.exists(sftpConfig.sftpBackupPath);
-        if(!existsRes) {
-            error = (new Error(`Given directory ${sftpConfig.sftpBackupPath} does not exist on the remote server`));
+        if (!existsRes) {
+            error = new Error(`Given directory ${sftpConfig.sftpBackupPath} does not exist on the remote server`);
         } else if (existsRes != 'd') {
-            error = (new Error(`Not a directory, ${sftpConfig.sftpBackupPath}`)); 
+            error = new Error(`Not a directory, ${sftpConfig.sftpBackupPath}`);
         }
     } catch (err) {
         error = err;
     } finally {
         let endRes = await sftp.end();
     }
-    if(error)
-        throw error;
+    if (error) throw error;
     return existsRes;
 };
 
 const uploadFile = async (srcFileName, srcFilePath) => {
-    
     const sftpConfig = confStore.store;
-    
+
     const config = init(sftpConfig);
     let sftp = new client();
     let uploadRes;
@@ -63,14 +57,13 @@ const uploadFile = async (srcFileName, srcFilePath) => {
     } finally {
         const endRes = await sftp.end();
     }
-    if(error)
-        throw error;
+    if (error) throw error;
     return uploadRes;
 };
 
 const deleteFile = async (fileName) => {
     const sftpConfig = confStore.store;
-    
+
     const config = init(sftpConfig);
     let sftp = new client();
     let deleteRes;
@@ -84,13 +77,12 @@ const deleteFile = async (fileName) => {
     } finally {
         const endRes = await sftp.end();
     }
-    if(error)
-        throw error;
+    if (error) throw error;
     return deleteRes;
 };
 
 module.exports = {
     exists,
     uploadFile,
-    deleteFile
-}
+    deleteFile,
+};

@@ -9,7 +9,6 @@ const sftp = require('./sftp');
 const confStore = new configstore();
 
 let askConfig = async () => {
-
     const configObj = confStore.store;
 
     let questions = [];
@@ -25,7 +24,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the hostname or IP of the remote server.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -35,14 +34,14 @@ let askConfig = async () => {
         default: configObj.sftpPort,
         validate: function (value) {
             if (value.length) {
-                if(isNaN(value) || Number(value) == 0) {
-                    return strings.validNoWarning
+                if (isNaN(value) || Number(value) == 0) {
+                    return strings.validNoWarning;
                 }
                 return true;
             } else {
                 return 'Please enter the hostname or IP of the remote server.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -56,7 +55,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the username for authentication.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -71,7 +70,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the password for authentication.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -85,7 +84,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the absolute path of the directory for storing backups on the remote server.';
             }
-        }
+        },
     });
 
     let sftpConfig = await inquirer.prompt(questions);
@@ -96,9 +95,9 @@ let askConfig = async () => {
         sftpStatus = ora('Authenticating you, please wait...');
         sftpStatus.start();
         isExists = await sftp.exists(sftpConfig);
-        sftpStatus.succeed("Authentication success");
+        sftpStatus.succeed('Authentication success');
     } catch (e) {
-        sftpStatus.fail("Authentication failed");
+        sftpStatus.fail('Authentication failed');
         throw e;
     }
 
@@ -106,5 +105,5 @@ let askConfig = async () => {
 };
 
 module.exports = {
-    askConfig
-}
+    askConfig,
+};

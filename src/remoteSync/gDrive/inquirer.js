@@ -7,7 +7,6 @@ const configstore = require('conf');
 const confStore = new configstore();
 
 let askConfig = async () => {
-
     const configObj = confStore.store;
 
     let questions = [];
@@ -18,7 +17,7 @@ let askConfig = async () => {
         default: configObj.gDriveServiceAccKeyLoc,
         validate: function (value) {
             if (value.length) {
-                if(!files.directoryExists(value)) {
+                if (!files.directoryExists(value)) {
                     return `No Such file, '${value}'`;
                 }
                 let isFile = files.isFile(value);
@@ -29,7 +28,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the absolute path of the service account key file.';
             }
-        }
+        },
     });
 
     let gdConfig = await inquirer.prompt(questions);
@@ -40,13 +39,15 @@ let askConfig = async () => {
         remoteStatus = ora('Authenticating you, please wait...');
         remoteStatus.start();
         folders = await gDrive.listFolders(gdConfig);
-        remoteStatus.succeed("Authentication success");
+        remoteStatus.succeed('Authentication success');
     } catch (e) {
-        remoteStatus.fail("Authentication failed");
+        remoteStatus.fail('Authentication failed');
         throw e;
     }
 
-    folders = folders.map(f => { return { name: f.name, value: f.id } });
+    folders = folders.map((f) => {
+        return {name: f.name, value: f.id};
+    });
 
     let retObj = await inquirer.prompt({
         type: 'list',
@@ -54,7 +55,7 @@ let askConfig = async () => {
         message: 'Choose the remote folder in which backups will be stored:',
         choices: folders,
         default: 0,
-        pageSize: 4
+        pageSize: 4,
     });
 
     retObj = Object.assign(retObj, gdConfig);
@@ -64,5 +65,5 @@ let askConfig = async () => {
 };
 
 module.exports = {
-    askConfig
-}
+    askConfig,
+};

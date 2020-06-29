@@ -4,7 +4,6 @@ const exec = require('./../../utils/await-exec');
 const path = require('path');
 
 let connect = async (dbConfig) => {
-    
     let connectionUri = mongoUriBuilder({
         username: dbConfig.dbAuthUser,
         password: dbConfig.dbAuthPwd,
@@ -13,16 +12,13 @@ let connect = async (dbConfig) => {
         database: dbConfig.dbName,
     });
 
-    let connRes = await mongoose.connect(connectionUri, {useNewUrlParser: true, useUnifiedTopology: true });
+    let connRes = await mongoose.connect(connectionUri, {useNewUrlParser: true, useUnifiedTopology: true});
     let disConnRes = await mongoose.connection.close();
     return connRes;
-}
+};
 
 let dump = async (dbConfig, backupPath) => {
-
-
-    const mongoDumpCmd =
-    `mongodump \
+    const mongoDumpCmd = `mongodump \
     --db ${dbConfig.dbName} \
     --host ${dbConfig.dbHost} \
     --port ${dbConfig.dbPort} \
@@ -33,9 +29,9 @@ let dump = async (dbConfig, backupPath) => {
 
     let dbDump = await exec(mongoDumpCmd);
     return dbDump;
-}
+};
 
 module.exports = {
     connect,
-    dump
-}
+    dump,
+};

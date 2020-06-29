@@ -9,7 +9,6 @@ const db = require('./database');
 const confStore = new configstore();
 
 let askConfig = async () => {
-
     const configObj = confStore.store;
 
     inquirer.registerPrompt('datetime', require('inquirer-datepicker-prompt'));
@@ -21,7 +20,7 @@ let askConfig = async () => {
         name: 'dbType',
         message: 'Choose the type of database to backup',
         choices: ['MongoDB', 'MySQL'],
-        default: configObj.dbType || 'MongoDB'
+        default: configObj.dbType || 'MongoDB',
     });
 
     questions.push({
@@ -35,7 +34,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter your database username.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -50,7 +49,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter your database password.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -64,7 +63,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the database hostname.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -73,22 +72,20 @@ let askConfig = async () => {
         message: 'Enter the database server port:',
         default: function (ans) {
             let defaultPort;
-            if(ans.dbType == "MongoDB")
-                defaultPort = '27017';
-            else if(ans.dbType == "MySQL")
-                defaultPort = "3306";
+            if (ans.dbType == 'MongoDB') defaultPort = '27017';
+            else if (ans.dbType == 'MySQL') defaultPort = '3306';
             return configObj.dbPort || defaultPort;
         },
         validate: function (value) {
             if (value.length) {
-                if(isNaN(value) || Number(value) == 0) {
-                    return strings.validNoWarning
+                if (isNaN(value) || Number(value) == 0) {
+                    return strings.validNoWarning;
                 }
                 return true;
             } else {
                 return 'Please enter the database server port.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -102,7 +99,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter your database name to be backed up.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -123,7 +120,7 @@ let askConfig = async () => {
             } else {
                 return 'Please enter the absolute path of the directory for storing local backups.';
             }
-        }
+        },
     });
 
     const dbBackupTimeString = configObj.dbBackupTime || '1970-01-01 00:00';
@@ -143,15 +140,14 @@ let askConfig = async () => {
         default: configObj.dbNoOfDays || '7',
         validate: function (value) {
             if (value.length) {
-                if(isNaN(value) || Number(value) == 0) {
-
-                    return strings.validNoWarning
+                if (isNaN(value) || Number(value) == 0) {
+                    return strings.validNoWarning;
                 }
                 return true;
             } else {
                 return 'Please enter No. of days to persist backups for.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -161,14 +157,14 @@ let askConfig = async () => {
         default: configObj.dbNoOfWeeks || '8',
         validate: function (value) {
             if (value.length) {
-                if(isNaN(value) || Number(value) == 0) {
-                    return strings.validNoWarning
+                if (isNaN(value) || Number(value) == 0) {
+                    return strings.validNoWarning;
                 }
                 return true;
             } else {
                 return 'Please enter No. of weeks to persist backups for.';
             }
-        }
+        },
     });
 
     questions.push({
@@ -178,14 +174,14 @@ let askConfig = async () => {
         default: configObj.dbNoOfMonths || '6',
         validate: function (value) {
             if (value.length) {
-                if(isNaN(value) || Number(value) == 0) {
-                    return strings.validNoWarning
+                if (isNaN(value) || Number(value) == 0) {
+                    return strings.validNoWarning;
                 }
                 return true;
             } else {
                 return 'Please enter No. of months to persist backups for.';
             }
-        }
+        },
     });
 
     let dbConnStatus = ora('Authenticating you, please wait...');
@@ -193,16 +189,16 @@ let askConfig = async () => {
         let dbConfig = await inquirer.prompt(questions);
         dbConnStatus.start();
         const dbConnRes = await db.connect(dbConfig);
-        dbConnStatus.succeed("Authentication success");
+        dbConnStatus.succeed('Authentication success');
         return dbConfig;
     } catch (e) {
-        dbConnStatus.fail("Authentication failed");
+        dbConnStatus.fail('Authentication failed');
         throw e;
     }
 
     return inquirer.prompt(questions);
-}
+};
 
 module.exports = {
-    askConfig
-}
+    askConfig,
+};

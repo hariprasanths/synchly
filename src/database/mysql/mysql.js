@@ -2,34 +2,33 @@ const mysql = require('mysql');
 const exec = require('./../../utils/await-exec');
 const files = require('./../../utils/files');
 const path = require('path');
-const { promisify } = require('util')
+const {promisify} = require('util');
 
 let awaitMysqlConnect = (connection) => {
     return new Promise((resolve, reject) => {
-        connection.connect(function(err) {
-            if(err) {
+        connection.connect(function (err) {
+            if (err) {
                 reject(err);
                 return;
             }
             resolve(connection);
         });
     });
-}
+};
 
 let awaitMysqlEnd = (connection) => {
     return new Promise((resolve, reject) => {
-        connection.end(function(err) {
-            if(err) {
+        connection.end(function (err) {
+            if (err) {
                 reject(err);
                 return;
             }
             resolve(connection);
         });
     });
-}
+};
 
 let connect = async (dbConfig) => {
-    
     const connection = mysql.createConnection({
         user: dbConfig.dbAuthUser,
         password: dbConfig.dbAuthPwd,
@@ -42,12 +41,10 @@ let connect = async (dbConfig) => {
     const disConnRes = await awaitMysqlEnd(connection);
 
     return connRes;
-}
+};
 
 let dump = async (dbConfig, backupPath) => {
-
-    const mysqlDumpCmd =
-    `mysqldump \
+    const mysqlDumpCmd = `mysqldump \
     --host=${dbConfig.dbHost} \
     --port=${dbConfig.dbPort} \
     --user=${dbConfig.dbAuthUser} \
@@ -61,9 +58,9 @@ let dump = async (dbConfig, backupPath) => {
 
     const compressFileRes = await files.compressFile(backupPath);
     return dbDump;
-}
+};
 
 module.exports = {
     connect,
-    dump
-}
+    dump,
+};
