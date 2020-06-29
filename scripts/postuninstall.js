@@ -1,4 +1,8 @@
 const omelette = require('omelette');
+const configstore = require('conf');
+
+const confStore = new configstore();
+confStore.clear();
 
 const completion = omelette('synchly');
 
