@@ -1,8 +1,15 @@
 # Synchly backups
 
+
+![version](https://img.shields.io/github/package-json/v/hariprasanths/synchly?color=blue)
+![Node Version](https://img.shields.io/node/v/synchly)
+[![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/hariprasanths/synchly/blob/master/docs)
+[![License: Apache-2.0](https://img.shields.io/github/license/hariprasanths/synchly)](https://github.com/hariprasanths/synchly/blob/master/LICENSE)
+
+
 * [Description](#description)
 * [Features](#features)
-* [Prequisites](#prerequisites)
+* [Prerequisites](#prerequisites)
 * [Installation](#installation)
 * [Tab completion](#tab-completion)
 * [Usage](#usage)
@@ -177,7 +184,7 @@ $ systemctl --user enable synchly
 $ systemctl --user start synchly
 ```
 
-If the unit files are not there inside `/usr/local/lib/node_modules`, use `npm root -g` to check get the global installation root path and copy the unit files from there.
+If the unit files are not there inside `/usr/local/lib/node_modules`, use `npm root -g` to get the global installation root path and copy the unit files from there.
 The `WorkingDirectory` field in the `synchly.service` unit file also needs to be changed, if the global installation root path is different from `/usr/local/lib/node_modules`.
 
 ### If installed using yarn:

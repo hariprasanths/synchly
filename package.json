@@ -54,15 +54,15 @@
     "dependencies": {
         "arg": "^4.1.3",
         "conf": "^6.2.4",
-        "node-cron": "^2.0.3",
-        "ora": "^4.0.4",
+        "googleapis": "^49.0.0",
         "inquirer": "^7.1.0",
         "inquirer-datepicker-prompt": "^0.4.2",
-        "omelette": "^0.4.12",
         "mongoose": "^5.9.11",
-        "nodemailer": "^6.4.6",
-        "googleapis": "^49.0.0",
         "mysql": "^2.18.1",
+        "node-cron": "^2.0.3",
+        "nodemailer": "^6.4.6",
+        "omelette": "^0.4.12",
+        "ora": "^4.0.4",
         "ssh2-sftp-client": "^5.1.2"
     },
     "devDependencies": {
