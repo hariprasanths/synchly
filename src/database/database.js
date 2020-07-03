@@ -14,7 +14,7 @@ const setupConfig = async (isDebug, filePath = undefined) => {
     dbConnStatus = ora('Authenticating you, please wait...');
     try {
         let config;
-        if(filePath) {
+        if (filePath) {
             config = require(filePath);
             dbConnStatus.start();
             config = await validator.validateInitConfig(config);
@@ -25,7 +25,7 @@ const setupConfig = async (isDebug, filePath = undefined) => {
 
         const dbConnRes = await connect(config);
         dbConnStatus.succeed('Authentication success');
-    
+
         config.dbSetupComplete = true;
         confStore.set(config);
         console.log('Database configuration updated successfully.');

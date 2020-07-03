@@ -32,23 +32,10 @@ let askConfig = async () => {
     });
 
     let gdConfig = await inquirer.prompt(questions);
+    return gdConfig;
+};
 
-    let remoteStatus;
-    let folders;
-    try {
-        remoteStatus = ora('Authenticating you, please wait...');
-        remoteStatus.start();
-        folders = await gDrive.listFolders(gdConfig);
-        remoteStatus.succeed('Authentication success');
-    } catch (e) {
-        remoteStatus.fail('Authentication failed');
-        throw e;
-    }
-
-    folders = folders.map((f) => {
-        return {name: f.name, value: f.id};
-    });
-
+const askRemoteLoc = async (folders) => {
     let retObj = await inquirer.prompt({
         type: 'list',
         name: 'gDriveParentFolderId',
@@ -58,12 +45,10 @@ let askConfig = async () => {
         pageSize: 4,
     });
 
-    retObj = Object.assign(retObj, gdConfig);
-
-    let cloneKeyRes = await gDrive.cloneServiceAccKey(gdConfig.gDriveServiceAccKeyLoc);
     return retObj;
 };
 
 module.exports = {
     askConfig,
+    askRemoteLoc,
 };

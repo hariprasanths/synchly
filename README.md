@@ -16,6 +16,7 @@
 * [Quick setup](#quick-setup)
 * [List of options](#list-of-options)
 * [Running as a daemon](#running-as-a-daemon)
+* [Configuration using file](#configuration-using-file)
 * [Examples](#examples)
 * [Contributing](#contributing)
 * [Show your support](#show-your-support)
@@ -71,6 +72,7 @@ If you use **Fish**, it appends a loader code to ~/.config/fish/config.fish file
 
 ```
 $ synchly [--config module]
+$ synchly [--config module] [--file filepath]
 $ synchly [--disable module]
 $ synchly [--enable module] [--stacktrace]
 $ synchly [--help]
@@ -83,12 +85,13 @@ $ synchly [--version]
 
 Synchly can be run with `--help` flag to get a full list of flags.
 
-The quickest way to get started is to run the `synchly --config=db` command:
+The quickest way to get started is to run the `synchly --config=db` command.
 
 To start synchly use the command `synchly --start`.</br>
 Synchly instance have to be restarted everytime you make a change to the configuration using the [cli options](#list-of-options).
 
 Configuration of modules (remote-sync and smtp) can be added or updated using `synchly --config=module` command.
+Initializing configurations can also be done using a file, `synchly --config=module --file=filepath`, refer [Configuration using file](#configuration-using-file).
 
 By default, remote-sync and smtp modules are disabled, to enable them, use `synchly --enable=module` command.
 
@@ -126,6 +129,12 @@ For running synchly as a daemon, refer [Running as a deamon](#running-as-a-daemo
         <td width="30%"><code>-e, --enable=module</code></td>
         <td width="100%">
         <p>Enable a module. <br/> Allowed modules: remote-sync | smtp</p>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%"><code>-f, --file=filepath</code></td>
+        <td width="100%">
+        <p>Create or update module configuration using the specified file.<br/> To be used with --config flag</p>
         </td>
     </tr>
     <tr>
@@ -196,6 +205,70 @@ If installed using yarn global, the service init files will be located on
 
 **NOTE: Don't forget to restart the daemon everytime you make a change to the configuration using the [cli options](#list-of-options).**
 
+## Configuration using file
+
+For initializing a module configuration using a file, you'll need a JSON file of the following structure:
+
+### Database Configuration
+
+**/home/foo/dbConfig.json:**
+```
+{
+    "databaseType": <database type (MySQL | MongoDB)>,
+    "username": <database username>,
+    "password": <database password>,
+    "host": <database hostname>,
+    "port": <database server port>,
+    "databaseName": <database name>,
+    "backupPath": <absolute path of the directory for storing local backups>,
+    "backupTime": <time to run the backups every day (Format - hh:mm)>,
+    "noOfDailies": <No. of days to persist backups for>,
+    "noOfWeeklies": <No. of weeks to persist backups for>,
+    "noOfMonthlies": <No. of months to persist backups for>
+}
+```
+
+```
+$ synchly --config=db --file=/home/foo/dbConfig.json
+```
+
+### Cloud Storage (remote-sync) configuration
+
+**/home/foo/remoteConfig.json**
+```
+{
+    "remoteType": <remote service (Google Drive | SFTP)>,
+    "serviceAccountKeyPath": <absolute path of service account key file (mandatory for remoteType: Google Drive)>,
+    "host": <sftp hostname or ip of remote server (mandatory for remoteType: SFTP)>,
+    "port": <sftp port (mandatory for remoteType: SFTP)>,
+    "username": <sftp username (mandatory for remoteType: SFTP)>,
+    "password": <sftp password (mandatory for remoteType: SFTP)>,
+    "backupPath": <absolute path of the directory for storing backups in remote server (mandatory for remoteType: SFTP)>
+}
+```
+
+```
+$ synchly --config=remote-sync --file=/home/foo/remoteConfig.json
+```
+
+### Status notifications (smtp) configuration
+
+**/home/foo/smtpConfig.json:**
+```
+{
+    "host": <smtp hostname>,
+    "port": <smtp port>,
+    "username": <smtp username>,
+    "password": <smtp password>,
+    "senderMail": <smtp sender e-mail>,
+    "recipientMail": <smtp recipient e-mail>,
+    "notificationTime": <time to send the status updates every day (Format - hh:mm)>
+}
+```
+
+```
+$ synchly --config=smtp --file=/home/foo/smtpConfig.json
+```
 
 ## Examples
 

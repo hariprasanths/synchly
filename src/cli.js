@@ -32,7 +32,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '-d': '--disable',
             '-S': '--stacktrace',
             '-D': '--debug',
-            '-f': '--file'
+            '-f': '--file',
         },
         {
             argv: rawArgs.slice(2),
@@ -47,7 +47,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
         version: args['--version'],
         help: args['--help'],
         reset: args['--reset'],
-        file: args['--file']
+        file: args['--file'],
     };
 };
 
@@ -105,7 +105,9 @@ const cli = async (args) => {
             }
         }
         if (!options.config && options.file) {
-            console.error("Use --flag=filePath along with --config=module for initializing the module config using the file");
+            console.error(
+                'Use --flag=filePath along with --config=module for initializing the module config using the file'
+            );
             return;
         }
 
@@ -119,7 +121,7 @@ const cli = async (args) => {
             }
         }
 
-        if(options.config && options.file) {
+        if (options.config && options.file) {
             if (options.file.length) {
                 if (!files.directoryExists(options.file)) {
                     console.error(`No Such file, '${options.file}'`);

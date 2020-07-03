@@ -4,19 +4,38 @@ const constants = require('./../utils/constants');
 const strings = require('./../utils/strings');
 const date = require('./../utils/date');
 var cron = require('node-cron');
+const ora = require('ora');
+const inquirer = require('./inquirer');
+const validator = require('./validator');
 
 const confStore = new configstore();
 
-const setupConfig = async (isDebug) => {
-    const inquirer = require('./inquirer');
+const setupConfig = async (isDebug, filePath = undefined) => {
+    let smtpConnStatus = ora('Authenticating you, please wait...');
     try {
-        let config = await inquirer.askConfig();
+        let config;
+        if (filePath) {
+            config = require(filePath);
+            smtpConnStatus.start();
+            config = await validator.validateInitConfig(config);
+        } else {
+            config = await inquirer.askConfig();
+            smtpConnStatus.start();
+        }
+
+        const testEmailSub = `SMTP configuration updation successfull`;
+        const testEmailBody = `Status notifications will be sent everyday to:<br/> ${config.smtpRecipientMail}`;
+        const smtpConnRes = await sendMail(testEmailSub, testEmailBody, config);
+
+        smtpConnStatus.succeed('Authentication succeess');
+
         config.smtpSetupComplete = true;
         confStore.set(config);
         console.log('SMTP configuration updated successfully.');
 
         return config;
     } catch (err) {
+        smtpConnStatus.fail('Authentication failed');
         console.error('SMTP configuration update failed.');
         console.error(`${err.name}: ${err.message}`);
         console.error('Re run with --config smtp to finish the configuration');
@@ -27,11 +46,6 @@ const setupConfig = async (isDebug) => {
             console.error(strings.debugModeDesc);
         }
     }
-};
-
-let validateEmail = (email) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
 };
 
 let smtpTransport;
@@ -104,7 +118,6 @@ let sendMailScheduler = (subject, htmlBody, isDebug) => {
 
 module.exports = {
     setupConfig,
-    validateEmail,
     sendMail,
     sendMailScheduler,
 };

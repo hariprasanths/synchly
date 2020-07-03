@@ -1,9 +1,6 @@
 const inquirer = require('inquirer');
-const files = require('../utils/files');
-const ora = require('ora');
 const configstore = require('conf');
-const constants = require('./../utils/constants');
-const smtp = require('./smtp');
+const utils = require('./../utils/utils');
 
 const confStore = new configstore();
 
@@ -72,7 +69,7 @@ let askConfig = async () => {
         default: configObj.smtpSenderMail,
         validate: function (value) {
             if (value.length) {
-                if (!smtp.validateEmail(value)) return 'Please enter a valid sender e-mail.';
+                if (!utils.validateEmail(value)) return 'Please enter a valid sender e-mail.';
                 return true;
             } else {
                 return 'Please enter the SMTP sender e-mail.';
@@ -87,7 +84,7 @@ let askConfig = async () => {
         default: configObj.smtpRecipientMail,
         validate: function (value) {
             if (value.length) {
-                if (!smtp.validateEmail(value)) return 'Please enter a valid recipient e-mail.';
+                if (!utils.validateEmail(value)) return 'Please enter a valid recipient e-mail.';
                 return true;
             } else {
                 return 'Please enter the SMTP recipient e-mail.';
@@ -107,18 +104,7 @@ let askConfig = async () => {
 
     let smtpConfig = await inquirer.prompt(questions);
 
-    let smtpConnStatus = ora('Authenticating you, please wait...');
-    try {
-        smtpConnStatus.start();
-        const testEmailSub = `SMTP configuration updation successfull`;
-        const testEmailBody = `Status notifications will be sent everyday to:<br/> ${smtpConfig.smtpRecipientMail}`;
-        const smtpConnRes = await smtp.sendMail(testEmailSub, testEmailBody, smtpConfig);
-        smtpConnStatus.succeed('Authentication success');
-        return smtpConfig;
-    } catch (e) {
-        smtpConnStatus.fail('Authentication failed');
-        throw e;
-    }
+    return smtpConfig;
 };
 
 module.exports = {

@@ -183,7 +183,7 @@ let askConfig = async () => {
     });
 
     let dbConfig;
-    try{
+    try {
         dbConfig = await inquirer.prompt(questions);
     } catch (e) {
         throw e;
