@@ -7,6 +7,8 @@ const smtp = require('./smtp/smtp');
 const backupScheduler = require('./backupScheduler');
 const configstore = require('conf');
 const packageJson = require('./../package.json');
+const files = require('./utils/files');
+const inquirer = require('./inquirer');
 
 const confStore = new configstore();
 
@@ -19,6 +21,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '--start': Boolean,
             '--stacktrace': Boolean,
             '--debug': Boolean,
+            '--file': String,
             '--reset': Boolean,
             '--version': Boolean,
             '--help': Boolean,
@@ -30,6 +33,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '-d': '--disable',
             '-S': '--stacktrace',
             '-D': '--debug',
+            '-f': '--file',
         },
         {
             argv: rawArgs.slice(2),
@@ -44,6 +48,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
         version: args['--version'],
         help: args['--help'],
         reset: args['--reset'],
+        file: args['--file'],
     };
 };
 
@@ -75,9 +80,14 @@ const cli = async (args) => {
         }
 
         if (options.reset) {
-            confStore.clear();
-            console.log(strings.resetSuccessLog);
-            return;
+            const resetConfirm = await inquirer.askResetConfirmation();
+            if (resetConfirm.resetConfirmation) {
+                confStore.clear();
+                console.log(strings.resetSuccessLog);
+                return;
+            } else {
+                return;
+            }
         }
 
         if (
@@ -87,7 +97,8 @@ const cli = async (args) => {
             !options.help &&
             !options.version &&
             !options.config &&
-            !options.reset
+            !options.reset &&
+            !options.file
         ) {
             console.log(strings.usageInfo);
             return;
@@ -99,6 +110,13 @@ const cli = async (args) => {
                 console.error(`Allowed arguments are ${configAllowedArgs}`);
             }
         }
+        if (!options.config && options.file) {
+            console.error(
+                'Use --flag=filePath along with --config=module for initializing the module config using the file'
+            );
+            return;
+        }
+
         if (options.enable || options.disable) {
             let givenArg;
             if (options.enable) givenArg = options.enable;
@@ -109,12 +127,28 @@ const cli = async (args) => {
             }
         }
 
+        if (options.config && options.file) {
+            if (options.file.length) {
+                if (!files.directoryExists(options.file)) {
+                    console.error(`No Such file, '${options.file}'`);
+                    return;
+                }
+                let isFile = files.isFile(options.file);
+                if (!isFile) {
+                    console.log(`'${options.file}' is a directory.`);
+                    return;
+                }
+            } else {
+                return 'Flag --file requires the absolute path of the config init file as an argument.';
+            }
+        }
+
         if (options.config == 'db') {
-            let dbSetupRes = await db.setupConfig(isDebug);
+            let dbSetupRes = await db.setupConfig(isDebug, options.file);
         } else if (options.config == 'remote-sync') {
-            let remoteSetupRes = await remoteSync.setupConfig(isDebug);
+            let remoteSetupRes = await remoteSync.setupConfig(isDebug, options.file);
         } else if (options.config == 'smtp') {
-            let smtpSetupRes = await smtp.setupConfig(isDebug);
+            let smtpSetupRes = await smtp.setupConfig(isDebug, options.file);
         }
 
         const configObj = confStore.store;

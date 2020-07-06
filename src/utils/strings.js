@@ -6,6 +6,7 @@ const confStore = new configstore();
 const confObj = confStore.store;
 
 const usageInfo = `usage: synchly [--config module]
+usage: synchly [--config module] [--file filepath]
 usage: synchly [--disable module] [--debug]
 usage: synchly [--enable module] [--stacktrace]
 usage: synchly [--help]
@@ -20,6 +21,7 @@ Options:
   -d, --disable=module          disable a module (remote-sync | smtp)
   -D, --debug                   prints even more information from CLI operations, used for debugging purposes
   -e, --enable=module           enable a module (remote-sync | smtp)
+  -f, --file=filePath           create or update module configuration using the specified file (to be used with --config flag)
   -h, --help                    prints CLI reference information about options and their arguments
       --reset                   reset all the configurations saved
   -S, --stacktrace              prints even more information about errors from CLI operation, used for debugging purposes. If you find a bug, provide output generated with the --stacktrace or --debug flag on when submitting a bug report

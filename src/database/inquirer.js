@@ -1,10 +1,7 @@
 const inquirer = require('inquirer');
 const files = require('./../utils/files');
-const ora = require('ora');
 const configstore = require('conf');
-const constants = require('./../utils/constants');
 const strings = require('./../utils/strings');
-const db = require('./database');
 
 const confStore = new configstore();
 
@@ -184,19 +181,14 @@ let askConfig = async () => {
         },
     });
 
-    let dbConnStatus = ora('Authenticating you, please wait...');
+    let dbConfig;
     try {
-        let dbConfig = await inquirer.prompt(questions);
-        dbConnStatus.start();
-        const dbConnRes = await db.connect(dbConfig);
-        dbConnStatus.succeed('Authentication success');
-        return dbConfig;
+        dbConfig = await inquirer.prompt(questions);
     } catch (e) {
-        dbConnStatus.fail('Authentication failed');
         throw e;
     }
 
-    return inquirer.prompt(questions);
+    return dbConfig;
 };
 
 module.exports = {

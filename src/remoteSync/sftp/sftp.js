@@ -28,9 +28,9 @@ const exists = async (sftpConfig = undefined) => {
         let connectRes = await sftp.connect(config);
         existsRes = await sftp.exists(sftpConfig.sftpBackupPath);
         if (!existsRes) {
-            error = new Error(`Given directory ${sftpConfig.sftpBackupPath} does not exist on the remote server`);
+            error = new Error(`Given directory '${sftpConfig.sftpBackupPath}' does not exist on the remote server`);
         } else if (existsRes != 'd') {
-            error = new Error(`Not a directory, ${sftpConfig.sftpBackupPath}`);
+            error = new Error(`Not a directory, '${sftpConfig.sftpBackupPath}'`);
         }
     } catch (err) {
         error = err;

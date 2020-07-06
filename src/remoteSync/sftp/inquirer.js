@@ -88,19 +88,6 @@ let askConfig = async () => {
     });
 
     let sftpConfig = await inquirer.prompt(questions);
-
-    let sftpStatus;
-    let isExists;
-    try {
-        sftpStatus = ora('Authenticating you, please wait...');
-        sftpStatus.start();
-        isExists = await sftp.exists(sftpConfig);
-        sftpStatus.succeed('Authentication success');
-    } catch (e) {
-        sftpStatus.fail('Authentication failed');
-        throw e;
-    }
-
     return sftpConfig;
 };
 
