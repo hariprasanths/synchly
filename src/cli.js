@@ -8,6 +8,7 @@ const backupScheduler = require('./backupScheduler');
 const configstore = require('conf');
 const packageJson = require('./../package.json');
 const files = require('./utils/files');
+const inquirer = require('./inquirer');
 
 const confStore = new configstore();
 
@@ -79,9 +80,14 @@ const cli = async (args) => {
         }
 
         if (options.reset) {
-            confStore.clear();
-            console.log(strings.resetSuccessLog);
-            return;
+            const resetConfirm = await inquirer.askResetConfirmation();
+            if (resetConfirm.resetConfirmation) {
+                confStore.clear();
+                console.log(strings.resetSuccessLog);
+                return;
+            } else {
+                return;
+            }
         }
 
         if (

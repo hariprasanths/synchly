@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const files = require('./../utils/files');
 const configstore = require('conf');
-const constants = require('./../utils/constants');
 const strings = require('./../utils/strings');
 
 const confStore = new configstore();
