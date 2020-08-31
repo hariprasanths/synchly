@@ -56,7 +56,10 @@ let dump = async (dbConfig, backupPath) => {
 
     let dbDump = await exec(mysqlDumpCmd);
 
-    const compressFileRes = await files.compressFile(backupPath);
+    if(dbConfig.dbIsCompressionEnabled) {
+        const compressFileRes = await files.compressFile(backupPath);
+    }
+    
     return dbDump;
 };
 

@@ -18,14 +18,26 @@ let connect = async (dbConfig) => {
 };
 
 let dump = async (dbConfig, backupPath) => {
-    const mongoDumpCmd = `mongodump \
-    --db ${dbConfig.dbName} \
-    --host ${dbConfig.dbHost} \
-    --port ${dbConfig.dbPort} \
-    --username ${dbConfig.dbAuthUser} \
-    --password ${dbConfig.dbAuthPwd} \
-    --gzip \
-    --archive=${backupPath}`;
+    let mongoDumpCmd;
+
+    if(dbConfig.dbIsCompressionEnabled) {
+        mongoDumpCmd = `mongodump \
+        --db ${dbConfig.dbName} \
+        --host ${dbConfig.dbHost} \
+        --port ${dbConfig.dbPort} \
+        --username ${dbConfig.dbAuthUser} \
+        --password ${dbConfig.dbAuthPwd} \
+        --gzip \
+        --archive=${backupPath}`;
+    } else {
+        mongoDumpCmd = `mongodump \
+        --db ${dbConfig.dbName} \
+        --host ${dbConfig.dbHost} \
+        --port ${dbConfig.dbPort} \
+        --username ${dbConfig.dbAuthUser} \
+        --password ${dbConfig.dbAuthPwd} \
+        --archive=${backupPath}`;
+    }
 
     let dbDump = await exec(mongoDumpCmd);
     return dbDump;

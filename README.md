@@ -221,6 +221,7 @@ For initializing a module configuration using a file, you'll need a JSON file of
     "port": <database server port>,
     "databaseName": <database name>,
     "backupPath": <absolute path of the directory for storing local backups>,
+    "enableCompression": <boolean to enable backup compression (true | false)>,
     "backupTime": <time to run the backups every day (Format - hh:mm)>,
     "noOfDailies": <No. of days to persist backups for>,
     "noOfWeeklies": <No. of weeks to persist backups for>,

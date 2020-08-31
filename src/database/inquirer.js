@@ -120,6 +120,12 @@ let askConfig = async () => {
         },
     });
 
+    questions.push({
+        type: 'confirm',
+        name: 'dbIsCompressionEnabled',
+        message: 'Do you want to enable backup compression?',
+    });
+
     const dbBackupTimeString = configObj.dbBackupTime || '1970-01-01 00:00';
 
     questions.push({
