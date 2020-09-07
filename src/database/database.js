@@ -68,8 +68,43 @@ let dump = async (backupDirName) => {
     return resp;
 };
 
+let dbRestore = async (isDebug) => {
+    let restoreStatus;
+    try {
+        let restoreConfig = await inquirer.askRestoreConfig();
+        if (restoreConfig.restoreConfrimation) {
+            let backupFileName = restoreConfig.backupFileName;
+            restoreStatus = ora('Restoring, please wait...');
+            const dbType = confStore.get('dbType');
+            const configObj = confStore.store;
+            let resp;
+            if (dbType == 'MongoDB') {
+                restoreStatus.start();
+                resp = await mongoDb.restore(configObj, backupFileName);
+            } else if (dbType == 'MySQL') {
+                restoreStatus.start();
+                resp = await mysql.restore(configObj, backupFileName);
+            }
+            restoreStatus.succeed('Restore success');
+            return resp;
+        }
+    } catch (error) {
+        if (restoreStatus != null) restoreStatus.fail('Restore failed');
+        console.error('Restoration of database from the backup failed.');
+        console.error(`${error.name}: ${error.message}`);
+        console.error('Re run with --restore to restore the backup');
+        if (isDebug) {
+            console.error('Stacktrace:');
+            console.error(error);
+        } else {
+            console.error(strings.debugModeDesc);
+        }
+    }
+};
+
 module.exports = {
     setupConfig,
     connect,
     dump,
+    dbRestore,
 };

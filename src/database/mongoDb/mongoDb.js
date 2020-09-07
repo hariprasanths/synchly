@@ -20,7 +20,7 @@ let connect = async (dbConfig) => {
 let dump = async (dbConfig, backupPath) => {
     let mongoDumpCmd;
 
-    if(dbConfig.dbIsCompressionEnabled) {
+    if (dbConfig.dbIsCompressionEnabled) {
         mongoDumpCmd = `mongodump \
         --db ${dbConfig.dbName} \
         --host ${dbConfig.dbHost} \
@@ -43,7 +43,35 @@ let dump = async (dbConfig, backupPath) => {
     return dbDump;
 };
 
+let restore = async (dbConfig, backupFilename) => {
+    let backupFilePath = path.join(dbConfig.dbBackupPath, backupFilename);
+    let mongoRestoreCmd;
+    if (dbConfig.dbIsCompressionEnabled) {
+        mongoRestoreCmd = `mongorestore \
+        --db ${dbConfig.dbName} \
+        --host ${dbConfig.dbHost}:${dbConfig.dbPort} \
+        --drop \
+        --gzip \
+        --archive=${backupFilePath}`;
+    } else {
+        mongoRestoreCmd = `mongorestore \
+        --db ${dbConfig.dbName} \
+        --host ${dbConfig.dbHost}:${dbConfig.dbPort} \
+        --drop \
+        --archive=${backupFilePath}`;
+    }
+
+    let dbRestore;
+    try {
+        dbRestore = await exec(mongoRestoreCmd);
+    } catch (err) {
+        throw err;
+    }
+    return dbRestore;
+};
+
 module.exports = {
     connect,
     dump,
+    restore,
 };
