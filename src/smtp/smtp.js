@@ -8,9 +8,8 @@ const ora = require('ora');
 const inquirer = require('./inquirer');
 const validator = require('./validator');
 
-const confStore = new configstore();
-
-const setupConfig = async (isDebug, filePath = undefined) => {
+const setupConfig = async (jobName, isDebug, filePath = undefined) => {
+    const jobConfStore = new configstore({configName: jobName});
     let smtpConnStatus = ora('Authenticating you, please wait...');
     try {
         let config;
@@ -19,18 +18,18 @@ const setupConfig = async (isDebug, filePath = undefined) => {
             smtpConnStatus.start();
             config = await validator.validateInitConfig(config);
         } else {
-            config = await inquirer.askConfig();
+            config = await inquirer.askConfig(jobName);
             smtpConnStatus.start();
         }
 
         const testEmailSub = `SMTP configuration updation successfull`;
         const testEmailBody = `Status notifications will be sent everyday to:<br/> ${config.smtpRecipientMail}`;
-        const smtpConnRes = await sendMail(testEmailSub, testEmailBody, config);
+        const smtpConnRes = await sendMail(jobName, testEmailSub, testEmailBody, config);
 
         smtpConnStatus.succeed('Authentication succeess');
 
         config.smtpSetupComplete = true;
-        confStore.set(config);
+        jobConfStore.set(config);
         console.log('SMTP configuration updated successfully.');
 
         return config;
@@ -48,12 +47,12 @@ const setupConfig = async (isDebug, filePath = undefined) => {
     }
 };
 
-let smtpTransport;
-let init = async (smtpConfig = undefined) => {
-    //587, 25 - not secure  & 465 - secure
-    if (!smtpConfig) smtpConfig = confStore.store;
-
-    smtpTransport = nodemailer.createTransport({
+let init = (jobName, smtpConfig = undefined) => {
+    const jobConfStore = new configstore({configName: jobName});
+    if (!smtpConfig) smtpConfig = jobConfStore.store;
+    
+    //port 587, 25 - not secure  & port 465 - secure
+    return nodemailer.createTransport({
         host: smtpConfig.smtpHost,
         port: smtpConfig.smtpPort,
         secure: smtpConfig.smtpPort == 465,
@@ -64,10 +63,11 @@ let init = async (smtpConfig = undefined) => {
     });
 };
 
-let sendMail = async (subject, htmlBody, smtpConfig = undefined) => {
-    init(smtpConfig);
+let sendMail = async (jobName, subject, htmlBody, smtpConfig = undefined) => {
+    const jobConfStore = new configstore({configName: jobName});
+    if (!smtpConfig) smtpConfig = jobConfStore.store;
 
-    if (!smtpConfig) smtpConfig = confStore.store;
+    let smtpTransport = init(jobName, smtpConfig);
 
     const mailOptions = {
         from: `Synchly backups <${smtpConfig.smtpSenderMail}>`,
@@ -82,15 +82,16 @@ let sendMail = async (subject, htmlBody, smtpConfig = undefined) => {
     return res;
 };
 
-let sendMailScheduler = (subject, htmlBody, isDebug) => {
-    const configObj = confStore.store;
+let sendMailScheduler = (jobName, subject, htmlBody, isDebug) => {
+    const jobConfStore = new configstore({configName: jobName});
+    const jobConfigObj = jobConfStore.store;
 
-    const smtpNotifyTime = new Date(configObj.smtpNotifyTime);
+    const smtpNotifyTime = new Date(jobConfigObj.smtpNotifyTime);
     const notifyHours = smtpNotifyTime.getHours();
     const notifyMinutes = smtpNotifyTime.getMinutes();
     let cronExp = `${notifyMinutes} ${notifyHours} * * *`;
 
-    const dbBackupTime = new Date(configObj.dbBackupTime);
+    const dbBackupTime = new Date(jobConfigObj.dbBackupTime);
 
     // send status updates as soon as the backup finishes if schedule is missed
     const isNotifyMissed = date.isBetween(smtpNotifyTime, dbBackupTime, new Date());
@@ -100,7 +101,7 @@ let sendMailScheduler = (subject, htmlBody, isDebug) => {
 
     const sendMailTask = cron.schedule(cronExp, async () => {
         try {
-            let smtpRes = await sendMail(subject, htmlBody, configObj);
+            let smtpRes = await sendMail(jobName, subject, htmlBody, jobConfigObj);
         } catch (e) {
             console.error(`smtp: failed to send status mail: ${e.message}`);
             if (isDebug) {

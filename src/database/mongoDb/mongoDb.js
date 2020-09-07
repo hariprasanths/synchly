@@ -61,12 +61,7 @@ let restore = async (dbConfig, backupFilename) => {
         --archive=${backupFilePath}`;
     }
 
-    let dbRestore;
-    try {
-        dbRestore = await exec(mongoRestoreCmd);
-    } catch (err) {
-        throw err;
-    }
+    let dbRestore = await exec(mongoRestoreCmd);
     return dbRestore;
 };
 

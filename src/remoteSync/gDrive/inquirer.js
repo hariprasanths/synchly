@@ -4,17 +4,16 @@ const gDrive = require('./gDrive');
 const ora = require('ora');
 const configstore = require('conf');
 
-const confStore = new configstore();
-
-let askConfig = async () => {
-    const configObj = confStore.store;
+let askConfig = async (jobName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    const jobConfigObj = jobConfStore.store;
 
     let questions = [];
     questions.push({
         name: 'gDriveServiceAccKeyLoc',
         type: 'input',
         message: 'Enter the absolute path of the service account key file:',
-        default: configObj.gDriveServiceAccKeyLoc,
+        default: jobConfigObj.gDriveServiceAccKeyLoc,
         validate: function (value) {
             if (value.length) {
                 if (!files.directoryExists(value)) {
