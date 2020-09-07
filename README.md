@@ -35,6 +35,7 @@ Automate database backups with customizable recurring schedules.
     * MongoDB
 * **Compression** - Synchly compresses the database backups to save up space.
 * **Cloud Storage Integration** - Sync the local backups to remote storage of your choice.
+* **Restoration** - Synchly restores the database from the backups;
 * **Supported remote storages**
     * Google Drive
     * SFTP
@@ -77,6 +78,7 @@ $ synchly [--disable module]
 $ synchly [--enable module] [--stacktrace]
 $ synchly [--help]
 $ synchly [--reset]
+$ synchly [--restore]
 $ synchly [--start]
 $ synchly [--version]
 ```
@@ -89,6 +91,8 @@ The quickest way to get started is to run the `synchly --config=db` command.
 
 To start synchly use the command `synchly --start`.</br>
 Synchly instance have to be restarted everytime you make a change to the configuration using the [cli options](#list-of-options).
+
+To restore database from the backup files use the command `synchly --restore`.</br>
 
 Configuration of modules (remote-sync and smtp) can be added or updated using `synchly --config=module` command.
 Initializing configurations can also be done using a file, `synchly --config=module --file=filepath`, refer [Configuration using file](#configuration-using-file).
@@ -147,6 +151,12 @@ For running synchly as a daemon, refer [Running as a deamon](#running-as-a-daemo
         <td width="30%"><code>--reset</code></td>
         <td width="100%">
         <p>Reset all the configurations saved</p>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%"><code>-R, --restore</code></td>
+        <td width="100%">
+        <p>Restore database from the backup</p>
         </td>
     </tr>
     <tr>

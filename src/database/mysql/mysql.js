@@ -56,14 +56,44 @@ let dump = async (dbConfig, backupPath) => {
 
     let dbDump = await exec(mysqlDumpCmd);
 
-    if(dbConfig.dbIsCompressionEnabled) {
+    if (dbConfig.dbIsCompressionEnabled) {
         const compressFileRes = await files.compressFile(backupPath);
     }
-    
+
     return dbDump;
+};
+
+let restore = async (dbConfig, backupFilename) => {
+    let backupFilePath = path.join(dbConfig.dbBackupPath, backupFilename);
+    if (dbConfig.dbIsCompressionEnabled) {
+        const decompressFileRes = await files.decompressFile(backupFilePath);
+        backupFilePath = backupFilePath + '.sql';
+    }
+    const mysqlDumpCmd = `mysql \
+    --host=${dbConfig.dbHost} \
+    --port=${dbConfig.dbPort} \
+    --protocol=TCP \
+    -u ${dbConfig.dbAuthUser} \
+    -p${dbConfig.dbAuthPwd} \
+    ${dbConfig.dbName} \
+    < ${backupFilePath}`;
+
+    let dbRestore;
+    try {
+        dbRestore = await exec(mysqlDumpCmd);
+    } catch (err) {
+        throw err;
+    } finally {
+        if (dbConfig.dbIsCompressionEnabled) {
+            files.deleteFile(backupFilePath);
+        }
+    }
+
+    return dbRestore;
 };
 
 module.exports = {
     connect,
     dump,
+    restore,
 };

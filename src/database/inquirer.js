@@ -197,6 +197,36 @@ let askConfig = async () => {
     return dbConfig;
 };
 
+let askRestoreConfig = async () => {
+    const configObj = confStore.store;
+    let questions = [];
+    let choices;
+
+    choices = await files.listFileNames(configObj.dbBackupPath);
+    if (choices == 0) {
+        throw {
+            name: 'Empty directory',
+            message: 'No backups have been found',
+        };
+    }
+    questions.push({
+        type: 'list',
+        name: 'backupFileName',
+        message: 'Choose the backup to restore :',
+        choices: choices,
+        default: choices[0],
+    });
+    questions.push({
+        type: 'confirm',
+        name: 'restoreConfrimation',
+        message: 'Restoring database from the backup will flush the existing database, are you sure want to conitnue ?',
+    });
+    let restoreConfig;
+    restoreConfig = await inquirer.prompt(questions);
+    return restoreConfig;
+};
+
 module.exports = {
     askConfig,
+    askRestoreConfig,
 };

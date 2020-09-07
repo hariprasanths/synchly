@@ -18,6 +18,7 @@ const completion = omelette('synchly').tree({
     '--version':[],
     '--help':[],
     '--start': [],
+    '--restore': [],
     '--reset': [],
 });
 completion.init();

@@ -11,7 +11,6 @@ const files = require('./utils/files');
 const inquirer = require('./inquirer');
 
 const confStore = new configstore();
-
 const parseArgumentsIntoOptions = (rawArgs) => {
     const args = arg(
         {
@@ -25,6 +24,8 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '--reset': Boolean,
             '--version': Boolean,
             '--help': Boolean,
+            '--restore': Boolean,
+            //Aliases
             '-c': '--config',
             '-v': '--version',
             '-h': '--help',
@@ -34,6 +35,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '-S': '--stacktrace',
             '-D': '--debug',
             '-f': '--file',
+            '-R': '--restore',
         },
         {
             argv: rawArgs.slice(2),
@@ -49,6 +51,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
         help: args['--help'],
         reset: args['--reset'],
         file: args['--file'],
+        restore: args['--restore'],
     };
 };
 
@@ -98,7 +101,8 @@ const cli = async (args) => {
             !options.version &&
             !options.config &&
             !options.reset &&
-            !options.file
+            !options.file &&
+            !options.restore
         ) {
             console.log(strings.usageInfo);
             return;
@@ -198,6 +202,14 @@ const cli = async (args) => {
                 backupScheduler(isDebug);
             }
         }
+        if (options.restore) {
+            let restoreSetup;
+            if (configObj.dbSetupComplete) {
+                restoreSetup = await db.dbRestore(isDebug);
+            } else {
+                console.log('Finish the db configuration before restoring from the backup');
+            }
+        }
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
         if (isDebug) {
@@ -208,7 +220,6 @@ const cli = async (args) => {
         }
     }
 };
-
 module.exports = {
     cli,
 };

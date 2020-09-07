@@ -20,6 +20,8 @@ const deleteFile = (filePath) => {
     return deleteFileAsync(filePath);
 };
 
+const listFileNames = promisify(fs.readdir);
+
 const compressFile = (filename) => {
     const tempFilename = `${filename}.temp`;
 
@@ -48,10 +50,35 @@ const compressFile = (filename) => {
     }
 };
 
+const decompressFile = (filename) => {
+    const tempFilename = `${filename}.sql`;
+    try {
+        const read = fs.createReadStream(filename);
+        const unzip = zlib.createGunzip();
+        const write = fs.createWriteStream(tempFilename);
+        read.pipe(unzip).pipe(write);
+
+        return new Promise((resolve, reject) => {
+            write.on('error', (err) => {
+                write.end();
+                reject(err);
+            });
+            write.on('finish', () => {
+                resolve();
+            });
+        });
+    } catch (err) {
+        deleteFile(tempFilename);
+        throw err;
+    }
+};
+
 module.exports = {
     getCurrentDirectoryBase,
     directoryExists,
     isFile,
     deleteFile,
     compressFile,
+    decompressFile,
+    listFileNames,
 };
