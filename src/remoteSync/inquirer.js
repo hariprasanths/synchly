@@ -4,10 +4,10 @@ const configstore = require('conf');
 const gDriveInquirer = require('./gDrive/inquirer');
 const sftpInquirer = require('./sftp/inquirer');
 
-const confStore = new configstore();
 
-let askConfig = async () => {
-    const configObj = confStore.store;
+let askConfig = async (jobName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    const jobConfigObj = jobConfStore.store;
 
     let questions = [];
     questions.push({
@@ -15,15 +15,15 @@ let askConfig = async () => {
         name: 'remoteType',
         message: 'Choose the remote service:',
         choices: ['Google Drive', 'SFTP'],
-        default: configObj.remoteType || 'Google Drive',
+        default: jobConfigObj.remoteType || 'Google Drive',
     });
 
     let retObj = await inquirer.prompt(questions);
     if (retObj.remoteType == 'Google Drive') {
-        let gdConfig = await gDriveInquirer.askConfig();
+        let gdConfig = await gDriveInquirer.askConfig(jobName);
         retObj = Object.assign(retObj, gdConfig);
     } else if (retObj.remoteType == 'SFTP') {
-        let sftpConfig = await sftpInquirer.askConfig();
+        let sftpConfig = await sftpInquirer.askConfig(jobName);
         retObj = Object.assign(retObj, sftpConfig);
     }
     return retObj;

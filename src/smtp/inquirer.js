@@ -2,10 +2,9 @@ const inquirer = require('inquirer');
 const configstore = require('conf');
 const utils = require('./../utils/utils');
 
-const confStore = new configstore();
-
-let askConfig = async () => {
-    const configObj = confStore.store;
+let askConfig = async (jobName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    const jobConfigObj = jobConfStore.store;
 
     inquirer.registerPrompt('datetime', require('inquirer-datepicker-prompt'));
 
@@ -14,7 +13,7 @@ let askConfig = async () => {
         name: 'smtpHost',
         type: 'input',
         message: 'Enter your SMTP hostname:',
-        default: configObj.smtpHost,
+        default: jobConfigObj.smtpHost,
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -28,7 +27,7 @@ let askConfig = async () => {
         name: 'smtpPort',
         type: 'list',
         message: 'Enter your SMTP port:',
-        default: configObj.smtpPort,
+        default: jobConfigObj.smtpPort,
         choices: [465, 587, 25],
         default: 465,
     });
@@ -37,7 +36,7 @@ let askConfig = async () => {
         name: 'smtpUser',
         type: 'input',
         message: 'Enter the SMTP username:',
-        default: configObj.smtpUser,
+        default: jobConfigObj.smtpUser,
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -51,7 +50,7 @@ let askConfig = async () => {
         name: 'smtpPwd',
         type: 'password',
         message: 'Enter the SMTP password:',
-        default: configObj.smtpPwd,
+        default: jobConfigObj.smtpPwd,
         mask: true,
         validate: function (value) {
             if (value.length) {
@@ -66,7 +65,7 @@ let askConfig = async () => {
         name: 'smtpSenderMail',
         type: 'input',
         message: 'Enter the SMTP sender e-mail:',
-        default: configObj.smtpSenderMail,
+        default: jobConfigObj.smtpSenderMail,
         validate: function (value) {
             if (value.length) {
                 if (!utils.validateEmail(value)) return 'Please enter a valid sender e-mail.';
@@ -81,7 +80,7 @@ let askConfig = async () => {
         name: 'smtpRecipientMail',
         type: 'input',
         message: 'Enter the SMTP recipient e-mail:',
-        default: configObj.smtpRecipientMail,
+        default: jobConfigObj.smtpRecipientMail,
         validate: function (value) {
             if (value.length) {
                 if (!utils.validateEmail(value)) return 'Please enter a valid recipient e-mail.';
@@ -92,7 +91,7 @@ let askConfig = async () => {
         },
     });
 
-    const smtpNotifyTimeString = configObj.smtpNotifyTime || '1970-01-01 00:00';
+    const smtpNotifyTimeString = jobConfigObj.smtpNotifyTime || '1970-01-01 00:00';
 
     questions.push({
         type: 'datetime',

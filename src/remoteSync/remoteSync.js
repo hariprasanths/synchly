@@ -8,9 +8,8 @@ const sftp = require('./sftp/sftp');
 const ora = require('ora');
 const validator = require('./validator');
 
-const confStore = new configstore();
-
-const setupConfig = async (isDebug, filePath = undefined) => {
+const setupConfig = async (jobName, isDebug, filePath = undefined) => {
+    const jobConfStore = new configstore({configName: jobName});
     let connStatus;
     connStatus = ora('Authenticating you, please wait...');
     try {
@@ -20,27 +19,27 @@ const setupConfig = async (isDebug, filePath = undefined) => {
             connStatus.start();
             config = await validator.validateInitConfig(config);
         } else {
-            config = await inquirer.askConfig();
+            config = await inquirer.askConfig(jobName);
             connStatus.start();
         }
 
         if (config.remoteType == 'Google Drive') {
             let folders;
-            folders = await gDrive.listFolders(config);
+            folders = await gDrive.listFolders(jobName, config);
             connStatus.succeed('Authentication success');
             folders = folders.map((f) => {
                 return {name: f.name, value: f.id};
             });
             let gdConfig = await gDriveInquirer.askRemoteLoc(folders);
             config = Object.assign(config, gdConfig);
-            let cloneKeyRes = await gDrive.cloneServiceAccKey(config.gDriveServiceAccKeyLoc);
+            let cloneKeyRes = await gDrive.cloneServiceAccKey(jobName, config.gDriveServiceAccKeyLoc);
         } else if (config.remoteType == 'SFTP') {
-            let isExists = await sftp.exists(config);
+            let isExists = await sftp.exists(jobName, config);
             connStatus.succeed('Authentication success');
         }
 
         config.remoteSetupComplete = true;
-        confStore.set(config);
+        jobConfStore.set(config);
         console.log('Remote Sync configuration updated successfully.');
 
         return config;
@@ -58,26 +57,28 @@ const setupConfig = async (isDebug, filePath = undefined) => {
     }
 };
 
-let uploadFile = async (fileName, filePath) => {
-    let remoteType = confStore.get('remoteType');
+let uploadFile = async (jobName, fileName, filePath) => {
+    const jobConfStore = new configstore({configName: jobName});
+    let remoteType = jobConfStore.get('remoteType');
     let resp;
 
     if (remoteType == 'Google Drive') {
-        resp = await gDrive.uploadFile(fileName, filePath);
+        resp = await gDrive.uploadFile(jobName, fileName, filePath);
     } else if (remoteType == 'SFTP') {
-        resp = await sftp.uploadFile(fileName, filePath);
+        resp = await sftp.uploadFile(jobName, fileName, filePath);
     }
     return resp;
 };
 
-let deleteFile = async (fileName) => {
-    let remoteType = confStore.get('remoteType');
+let deleteFile = async (jobName, fileName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    let remoteType = jobConfStore.get('remoteType');
     let resp;
 
     if (remoteType == 'Google Drive') {
-        resp = await gDrive.deleteFile(fileName);
+        resp = await gDrive.deleteFile(jobName, fileName);
     } else if (remoteType == 'SFTP') {
-        resp = await sftp.deleteFile(fileName);
+        resp = await sftp.deleteFile(jobName, fileName);
     }
     return resp;
 };

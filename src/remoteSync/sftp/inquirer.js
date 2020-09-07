@@ -6,10 +6,9 @@ const constants = require('./../../utils/constants');
 const strings = require('./../../utils/strings');
 const sftp = require('./sftp');
 
-const confStore = new configstore();
-
-let askConfig = async () => {
-    const configObj = confStore.store;
+let askConfig = async (jobName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    const jobConfigObj = jobConfStore.store;
 
     let questions = [];
 
@@ -17,7 +16,7 @@ let askConfig = async () => {
         name: 'sftpHost',
         type: 'input',
         message: 'Enter the hostname or IP of the remote server:',
-        default: configObj.sftpHost,
+        default: jobConfigObj.sftpHost,
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -31,7 +30,7 @@ let askConfig = async () => {
         name: 'sftpPort',
         type: 'input',
         message: 'Enter the port number of the remote server:',
-        default: configObj.sftpPort,
+        default: jobConfigObj.sftpPort,
         validate: function (value) {
             if (value.length) {
                 if (isNaN(value) || Number(value) == 0) {
@@ -48,7 +47,7 @@ let askConfig = async () => {
         name: 'sftpAuthUser',
         type: 'input',
         message: 'Enter the username for authentication:',
-        default: configObj.sftpAuthUser,
+        default: jobConfigObj.sftpAuthUser,
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -63,7 +62,7 @@ let askConfig = async () => {
         type: 'password',
         mask: true,
         message: 'Enter the password for authentication:',
-        default: configObj.sftpAuthPwd,
+        default: jobConfigObj.sftpAuthPwd,
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -77,7 +76,7 @@ let askConfig = async () => {
         name: 'sftpBackupPath',
         type: 'input',
         message: 'Enter the absolute path of the directory for storing backups on the remote server:',
-        default: configObj.sftpBackupPath,
+        default: jobConfigObj.sftpBackupPath,
         validate: function (value) {
             if (value.length) {
                 return true;

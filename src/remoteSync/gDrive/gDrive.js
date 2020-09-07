@@ -2,28 +2,26 @@ const {google} = require('googleapis');
 const configstore = require('conf');
 const fs = require('fs');
 
-const confStore = new configstore();
-
-let drive;
-
-let init = (googleCreds = undefined) => {
-    if (!googleCreds) googleCreds = confStore.store;
+let init = (jobName, googleCreds = undefined) => {
+    const jobConfStore = new configstore({configName: jobName});
+    if (!googleCreds) googleCreds = jobConfStore.store;
     else {
         googleCreds = require(googleCreds.gDriveServiceAccKeyLoc);
     }
 
     const scopes = ['https://www.googleapis.com/auth/drive'];
     const gDriveAuth = new google.auth.JWT(googleCreds.client_email, null, googleCreds.private_key, scopes);
-    drive = google.drive({version: 'v3', auth: gDriveAuth});
+    return drive = google.drive({version: 'v3', auth: gDriveAuth});
 };
 
-let cloneServiceAccKey = async (serviceKeyLoc) => {
+let cloneServiceAccKey = async (jobName, serviceKeyLoc) => {
+    const jobConfStore = new configstore({configName: jobName});
     const googleCreds = require(serviceKeyLoc);
-    return await confStore.set(googleCreds);
+    return await jobConfStore.set(googleCreds);
 };
 
-let listFolders = async (gdConfig) => {
-    init(gdConfig);
+let listFolders = async (jobName, gdConfig) => {
+    let drive = init(jobName, gdConfig);
     let res = await drive.files.list({
         q: "mimeType = 'application/vnd.google-apps.folder'",
     });
@@ -31,13 +29,14 @@ let listFolders = async (gdConfig) => {
     return files;
 };
 
-let uploadFile = async (fileName, filePath) => {
-    init();
+let uploadFile = async (jobName, fileName, filePath) => {
+    const jobConfStore = new configstore({configName: jobName});
+    let drive = init(jobName);
     let res = await drive.files.create({
         requestBody: {
             name: fileName,
             mimeType: 'application/x-gzip',
-            parents: [confStore.get('gDriveParentFolderId')],
+            parents: [jobConfStore.get('gDriveParentFolderId')],
         },
         media: {
             mimeType: 'application/x-gzip',
@@ -45,15 +44,16 @@ let uploadFile = async (fileName, filePath) => {
         },
     });
 
-    confStore.set({[res.data.name]: res.data.id});
+    jobConfStore.set({[res.data.name]: res.data.id});
     return res;
 };
 
-let deleteFile = async (fileName) => {
-    init();
-    let fileId = confStore.get(fileName);
+let deleteFile = async (jobName, fileName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    let drive = init(jobName);
+    let fileId = jobConfStore.get(fileName);
     let res = await drive.files.delete({fileId: fileId});
-    confStore.delete(fileName);
+    jobConfStore.delete(fileName);
     return res;
 };
 

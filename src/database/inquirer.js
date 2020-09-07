@@ -3,10 +3,9 @@ const files = require('./../utils/files');
 const configstore = require('conf');
 const strings = require('./../utils/strings');
 
-const confStore = new configstore();
-
-let askConfig = async () => {
-    const configObj = confStore.store;
+let askConfig = async (jobName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    const jobConfigObj = jobConfStore.store;
 
     inquirer.registerPrompt('datetime', require('inquirer-datepicker-prompt'));
 
@@ -17,14 +16,14 @@ let askConfig = async () => {
         name: 'dbType',
         message: 'Choose the type of database to backup',
         choices: ['MongoDB', 'MySQL'],
-        default: configObj.dbType || 'MongoDB',
+        default: jobConfigObj.dbType || 'MongoDB',
     });
 
     questions.push({
         name: 'dbAuthUser',
         type: 'input',
         message: 'Enter your database username:',
-        default: configObj.dbAuthUser,
+        default: jobConfigObj.dbAuthUser,
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -38,7 +37,7 @@ let askConfig = async () => {
         name: 'dbAuthPwd',
         type: 'password',
         message: 'Enter your database password:',
-        default: configObj.dbAuthPwd,
+        default: jobConfigObj.dbAuthPwd,
         mask: true,
         validate: function (value) {
             if (value.length) {
@@ -53,7 +52,7 @@ let askConfig = async () => {
         name: 'dbHost',
         type: 'input',
         message: 'Enter the database hostname:',
-        default: configObj.dbHost || 'localhost',
+        default: jobConfigObj.dbHost || 'localhost',
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -71,7 +70,7 @@ let askConfig = async () => {
             let defaultPort;
             if (ans.dbType == 'MongoDB') defaultPort = '27017';
             else if (ans.dbType == 'MySQL') defaultPort = '3306';
-            return configObj.dbPort || defaultPort;
+            return jobConfigObj.dbPort || defaultPort;
         },
         validate: function (value) {
             if (value.length) {
@@ -89,7 +88,7 @@ let askConfig = async () => {
         name: 'dbName',
         type: 'input',
         message: 'Enter the database name to backup:',
-        default: configObj.dbName,
+        default: jobConfigObj.dbName,
         validate: function (value) {
             if (value.length) {
                 return true;
@@ -103,7 +102,7 @@ let askConfig = async () => {
         name: 'dbBackupPath',
         type: 'input',
         message: 'Enter the absolute path of the directory for storing local backups:',
-        default: configObj.dbBackupPath,
+        default: jobConfigObj.dbBackupPath,
         validate: function (value) {
             if (value.length) {
                 if (!files.directoryExists(value)) {
@@ -126,7 +125,7 @@ let askConfig = async () => {
         message: 'Do you want to enable backup compression?',
     });
 
-    const dbBackupTimeString = configObj.dbBackupTime || '1970-01-01 00:00';
+    const dbBackupTimeString = jobConfigObj.dbBackupTime || '1970-01-01 00:00';
 
     questions.push({
         type: 'datetime',
@@ -140,7 +139,7 @@ let askConfig = async () => {
         name: 'dbNoOfDays',
         type: 'input',
         message: 'Enter the No. of days to persist backups for (1 backup per day):',
-        default: configObj.dbNoOfDays || '7',
+        default: jobConfigObj.dbNoOfDays || '7',
         validate: function (value) {
             if (value.length) {
                 if (isNaN(value) || Number(value) == 0) {
@@ -157,7 +156,7 @@ let askConfig = async () => {
         name: 'dbNoOfWeeks',
         type: 'input',
         message: 'Enter the No. of weeks to persist backups for (1 backup per week):',
-        default: configObj.dbNoOfWeeks || '8',
+        default: jobConfigObj.dbNoOfWeeks || '8',
         validate: function (value) {
             if (value.length) {
                 if (isNaN(value) || Number(value) == 0) {
@@ -174,7 +173,7 @@ let askConfig = async () => {
         name: 'dbNoOfMonths',
         type: 'input',
         message: 'Enter the No. of months to persist backups for (1 backup per month):',
-        default: configObj.dbNoOfMonths || '6',
+        default: jobConfigObj.dbNoOfMonths || '6',
         validate: function (value) {
             if (value.length) {
                 if (isNaN(value) || Number(value) == 0) {
@@ -197,12 +196,13 @@ let askConfig = async () => {
     return dbConfig;
 };
 
-let askRestoreConfig = async () => {
-    const configObj = confStore.store;
+let askRestoreConfig = async (jobName) => {
+    const jobConfStore = new configstore({configName: jobName});
+    const jobConfigObj = jobConfStore.store;
     let questions = [];
     let choices;
 
-    choices = await files.listFileNames(configObj.dbBackupPath);
+    choices = await files.listFileNames(jobConfigObj.dbBackupPath);
     if (choices == 0) {
         throw {
             name: 'Empty directory',
