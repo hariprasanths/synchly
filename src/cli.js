@@ -98,7 +98,7 @@ const cli = async (args) => {
         if (options.reset) {
             const resetConfirm = await inquirer.askResetConfirmation(jobName);
             if (resetConfirm.resetConfirmation) {
-                console.log(`Resetting configurations for the job '${jobName}`)
+                console.log(`Resetting configurations for the job '${jobName}`);
                 jobConfStore.clear();
                 confStore.delete(jobName);
                 console.log('Success');
@@ -180,8 +180,8 @@ const cli = async (args) => {
                     jobConfStore.set('remoteSyncEnabled', true);
                     console.log('Success');
                 }
-            } else if(jobConfigObj.remoteSyncEnabled) {
-                console.log(`Module 'remote-sync' already enabled`)
+            } else if (jobConfigObj.remoteSyncEnabled) {
+                console.log(`Module 'remote-sync' already enabled`);
             } else {
                 console.log(`Enabling module 'remote-sync'`);
                 jobConfStore.set('remoteSyncEnabled', true);
@@ -196,9 +196,9 @@ const cli = async (args) => {
                     jobConfStore.set('smtpEnabled', true);
                     console.log('Success');
                 }
-            } else if(jobConfigObj.smtpEnabled) {
-                console.log(`Module 'smtp' already enabled`)
-            }  else {
+            } else if (jobConfigObj.smtpEnabled) {
+                console.log(`Module 'smtp' already enabled`);
+            } else {
                 console.log(`Enabling module 'smtp'`);
                 jobConfStore.set('smtpEnabled', true);
                 console.log('Success');
@@ -206,16 +206,16 @@ const cli = async (args) => {
         }
 
         if (options.disable == 'remote-sync') {
-            if(!jobConfigObj.remoteSyncEnabled) {
-                console.log(`Module 'remote-sync' already disabled`);    
+            if (!jobConfigObj.remoteSyncEnabled) {
+                console.log(`Module 'remote-sync' already disabled`);
             } else {
                 console.log(`Disabling module 'remote-sync'`);
                 jobConfStore.set('remoteSyncEnabled', false);
                 console.log('Success');
             }
         } else if (options.disable == 'smtp') {
-            if(!jobConfigObj.smtpEnabled) {
-                console.log(`Module 'smtp' already disabled`);    
+            if (!jobConfigObj.smtpEnabled) {
+                console.log(`Module 'smtp' already disabled`);
             } else {
                 console.log(`Disabling module 'smtp'`);
                 jobConfStore.set('smtpEnabled', false);
@@ -228,9 +228,9 @@ const cli = async (args) => {
         }
 
         if (options.disablejob) {
-            if(!jobConfigObj.dbSetupComplete) {
-                console.error(`Job '${jobName}' does not exist!`)
-            } else if (!confStore.get(`${jobName}.enabled`)){
+            if (!jobConfigObj.dbSetupComplete) {
+                console.error(`Job '${jobName}' does not exist!`);
+            } else if (!confStore.get(`${jobName}.enabled`)) {
                 console.log(`Job '${jobName} already disabled`);
             } else {
                 console.log(`Disabling job '${jobName}`);
@@ -243,8 +243,7 @@ const cli = async (args) => {
             const jobNamesConfig = confStore.store;
             let jobNames = [];
             for (let j in jobNamesConfig) {
-                if(jobNamesConfig[j].enabled)
-                    jobNames.push(j);
+                if (jobNamesConfig[j].enabled) jobNames.push(j);
             }
             backupScheduler(jobNames, isDebug);
         }
@@ -281,14 +280,14 @@ const enableJob = async (jobName, isDebug) => {
             confStore.set(`${jobName}.enabled`, true);
             console.log('Success');
         }
-    } else if (confStore.get(`${jobName}.enabled`)){
+    } else if (confStore.get(`${jobName}.enabled`)) {
         console.log(`Job '${jobName}' already enabled`);
     } else {
         console.log(`Enabling job '${jobName}'`);
         confStore.set(`${jobName}.enabled`, true);
         console.log('Success');
     }
-}
+};
 
 module.exports = {
     cli,

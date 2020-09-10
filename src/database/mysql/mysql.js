@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const exec = require('./../../utils/await-exec');
+const isGzip = require('./../../utils/isGzip');
 const files = require('./../../utils/files');
 const path = require('path');
 const {promisify} = require('util');
@@ -65,7 +66,8 @@ let dump = async (dbConfig, backupPath) => {
 
 let restore = async (dbConfig, backupFilename) => {
     let backupFilePath = path.join(dbConfig.dbBackupPath, backupFilename);
-    if (dbConfig.dbIsCompressionEnabled) {
+    let isCompressed = isGzip(backupFilePath);
+    if (isCompressed) {
         const decompressFileRes = await files.decompressFile(backupFilePath);
         backupFilePath = backupFilePath + '.sql';
     }
@@ -77,19 +79,16 @@ let restore = async (dbConfig, backupFilename) => {
     -p${dbConfig.dbAuthPwd} \
     ${dbConfig.dbName} \
     < ${backupFilePath}`;
-
-    let dbRestore;
     try {
-        dbRestore = await exec(mysqlDumpCmd);
+        let dbRestore = await exec(mysqlDumpCmd);
+        return dbRestore;
     } catch (err) {
         throw err;
     } finally {
-        if (dbConfig.dbIsCompressionEnabled) {
+        if (isCompressed) {
             files.deleteFile(backupFilePath);
         }
     }
-
-    return dbRestore;
 };
 
 module.exports = {

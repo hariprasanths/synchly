@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const files = require('./../utils/files');
 const configstore = require('conf');
+const constants = require('../utils/constants');
 const strings = require('./../utils/strings');
 
 let askConfig = async (jobName) => {
@@ -200,10 +201,12 @@ let askRestoreConfig = async (jobName) => {
     const jobConfStore = new configstore({configName: jobName});
     const jobConfigObj = jobConfStore.store;
     let questions = [];
-    let choices;
+    let fileList = [];
+    let choices = [];
 
-    choices = await files.listFileNames(jobConfigObj.dbBackupPath);
-    if (choices == 0) {
+    fileList = await files.listFileNames(jobConfigObj.dbBackupPath);
+    choices = getJobSpecificBackups(jobName, fileList);
+    if (choices.length == 0) {
         throw {
             name: 'Empty directory',
             message: 'No backups have been found',
@@ -224,6 +227,18 @@ let askRestoreConfig = async (jobName) => {
     let restoreConfig;
     restoreConfig = await inquirer.prompt(questions);
     return restoreConfig;
+};
+
+var getJobSpecificBackups = (jobName, fileList) => {
+    let choices = [];
+    for (let index in fileList) {
+        let fileName = fileList[index];
+        let jobNameComparator = fileName.split(constants.DB_BACKUP_DIR_PREFIX);
+        if (jobNameComparator[0] == jobName) {
+            choices.push(fileName);
+        }
+    }
+    return choices;
 };
 
 module.exports = {

@@ -22,7 +22,7 @@ const deleteFile = (filePath) => {
 
 const listFileNames = promisify(fs.readdir);
 
-const compressFile = (filename) => {
+const compressFile = async (filename) => {
     const tempFilename = `${filename}.temp`;
 
     fs.renameSync(filename, tempFilename);
@@ -33,7 +33,7 @@ const compressFile = (filename) => {
         const write = fs.createWriteStream(filename);
         read.pipe(zip).pipe(write);
 
-        return new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             write.on('error', (err) => {
                 write.end();
                 reject(err);
@@ -42,6 +42,7 @@ const compressFile = (filename) => {
                 resolve();
             });
         });
+        return await promise;
     } catch (err) {
         deleteFile(filename);
         throw err;
@@ -50,7 +51,7 @@ const compressFile = (filename) => {
     }
 };
 
-const decompressFile = (filename) => {
+const decompressFile = async (filename) => {
     const tempFilename = `${filename}.sql`;
     try {
         const read = fs.createReadStream(filename);
@@ -58,7 +59,7 @@ const decompressFile = (filename) => {
         const write = fs.createWriteStream(tempFilename);
         read.pipe(unzip).pipe(write);
 
-        return new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
             write.on('error', (err) => {
                 write.end();
                 reject(err);
@@ -67,6 +68,7 @@ const decompressFile = (filename) => {
                 resolve();
             });
         });
+        return await promise;
     } catch (err) {
         deleteFile(tempFilename);
         throw err;

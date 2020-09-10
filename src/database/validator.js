@@ -69,8 +69,12 @@ const validateInitConfig = async (config) => {
     if (!config.hasOwnProperty(dbConfigKeys.dbIsCompressionEnabled)) {
         throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbIsCompressionEnabled}'`);
     }
-    if (typeof config[dbConfigKeys.dbIsCompressionEnabled] != "boolean"){
-        throw new Error(`Invalid config: Expected a boolean but got a '${typeof config[dbConfigKeys.dbIsCompressionEnabled]}' for the field '${dbConfigKeys.dbIsCompressionEnabled}'`);
+    if (typeof config[dbConfigKeys.dbIsCompressionEnabled] != 'boolean') {
+        throw new Error(
+            `Invalid config: Expected a boolean but got a '${typeof config[
+                dbConfigKeys.dbIsCompressionEnabled
+            ]}' for the field '${dbConfigKeys.dbIsCompressionEnabled}'`
+        );
     }
     validatedConfig.dbIsCompressionEnabled = config[dbConfigKeys.dbIsCompressionEnabled];
 

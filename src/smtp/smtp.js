@@ -50,7 +50,7 @@ const setupConfig = async (jobName, isDebug, filePath = undefined) => {
 let init = (jobName, smtpConfig = undefined) => {
     const jobConfStore = new configstore({configName: jobName});
     if (!smtpConfig) smtpConfig = jobConfStore.store;
-    
+
     //port 587, 25 - not secure  & port 465 - secure
     return nodemailer.createTransport({
         host: smtpConfig.smtpHost,
