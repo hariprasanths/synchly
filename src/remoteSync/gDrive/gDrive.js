@@ -11,7 +11,7 @@ let init = (jobName, googleCreds = undefined) => {
 
     const scopes = ['https://www.googleapis.com/auth/drive'];
     const gDriveAuth = new google.auth.JWT(googleCreds.client_email, null, googleCreds.private_key, scopes);
-    return drive = google.drive({version: 'v3', auth: gDriveAuth});
+    return (drive = google.drive({version: 'v3', auth: gDriveAuth}));
 };
 
 let cloneServiceAccKey = async (jobName, serviceKeyLoc) => {

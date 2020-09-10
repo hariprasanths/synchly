@@ -33,7 +33,6 @@ Options:
   -v, --version                 display version information and exit`;
 
 const statusReportTemplate = (jobName, dbSuccess, removedDirs, dbError, remoteSuccess, remoteError) => {
-
     const jobConfStore = new configstore({configName: jobName});
     const jobConfObj = jobConfStore.store;
     const currentDateString = new Date().toDateString();
@@ -87,7 +86,6 @@ const statusReportTemplate = (jobName, dbSuccess, removedDirs, dbError, remoteSu
 };
 
 const statusReportLog = (jobName, dbSuccess, removedDirs, dbError, remoteSuccess, remoteError) => {
-
     const jobConfStore = new configstore({configName: jobName});
     const jobConfObj = jobConfStore.store;
     const currentDateString = new Date().toDateString();
@@ -139,12 +137,11 @@ const statusReportLog = (jobName, dbSuccess, removedDirs, dbError, remoteSuccess
 };
 
 const jobConfigsLog = (jobName, jobConfObj) => {
-
     const backupTime = new Date(jobConfObj.dbBackupTime).toTimeString();
     const smtpNotifyTime = new Date(jobConfObj.smtpNotifyTime).toTimeString();
     let retString = `\nStarting Job '${jobName}' with following configuration:\n`;
     retString += `Backup of ${jobConfObj.dbType} database ${jobConfObj.dbName} scheduled on ${backupTime}\n`;
-    
+
     retString += `Remote-Sync:\n`;
 
     if (jobConfObj.remoteSyncEnabled) {
@@ -155,14 +152,14 @@ const jobConfigsLog = (jobName, jobConfObj) => {
 
     retString += `SMTP:\n`;
     if (jobConfObj.smtpEnabled) {
-        retString += `Status notifications scheduled to be sent to the following e-mails on ${smtpNotifyTime}:\n`
+        retString += `Status notifications scheduled to be sent to the following e-mails on ${smtpNotifyTime}:\n`;
         retString += `${jobConfObj.smtpRecipientMail}\n`;
     } else {
         retString += `Disabled\n`;
     }
 
     return retString;
-}
+};
 
 module.exports = {
     debugModeDesc: 'Re run with --stacktrace or --debug to get more details about the error',

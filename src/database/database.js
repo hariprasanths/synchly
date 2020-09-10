@@ -82,7 +82,7 @@ let setupRestore = async (jobName, isDebug) => {
             return dbRestoreRes;
         }
     } catch (error) {
-        if (restoreStatus != null) restoreStatus.fail('Restore failed');
+        restoreStatus.fail('Restore failed');
         console.error('Restoration of database from the backup failed.');
         console.error(`${error.name}: ${error.message}`);
         console.error('Re run with --restore to restore the backup');
@@ -104,7 +104,7 @@ let restore = async (dbConfig, backupFileName) => {
         resp = await mysql.restore(dbConfig, backupFileName);
     }
     return resp;
-}
+};
 
 module.exports = {
     setupConfig,

@@ -6,8 +6,8 @@ const configstore = require('conf');
 
 let cronScheduler = (jobNames, isDebug) => {
     console.log(strings.synchlyStartedDesc);
-    
-    for(let i in jobNames) {
+
+    for (let i in jobNames) {
         const currentJob = jobNames[i];
         const jobConfStore = new configstore({configName: currentJob});
         const jobConfObj = jobConfStore.store;
@@ -22,9 +22,8 @@ let cronScheduler = (jobNames, isDebug) => {
         });
     }
 
-    console.log(`Started ${jobNames.length} job(s)`)
-    if(jobNames.length == 0)
-        console.log(strings.enableJobsWarning)
+    console.log(`Started ${jobNames.length} job(s)`);
+    if (jobNames.length == 0) console.log(strings.enableJobsWarning);
 };
 
 module.exports = cronScheduler;

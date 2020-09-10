@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const mongoUriBuilder = require('./mongoUriBuilder');
 const exec = require('./../../utils/await-exec');
+const isGzip = require('./../../utils/isGzip');
 const path = require('path');
 
 let connect = async (dbConfig) => {
@@ -45,8 +46,9 @@ let dump = async (dbConfig, backupPath) => {
 
 let restore = async (dbConfig, backupFilename) => {
     let backupFilePath = path.join(dbConfig.dbBackupPath, backupFilename);
+    let isCompressed = isGzip(backupFilePath);
     let mongoRestoreCmd;
-    if (dbConfig.dbIsCompressionEnabled) {
+    if (isCompressed) {
         mongoRestoreCmd = `mongorestore \
         --db ${dbConfig.dbName} \
         --host ${dbConfig.dbHost}:${dbConfig.dbPort} \

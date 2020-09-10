@@ -7,8 +7,7 @@ const confStore = new configstore();
 const jobNamesConfig = confStore.store;
 let jobNames = [];
 for (let j in jobNamesConfig) {
-    if(jobNamesConfig[j].enabled)
-        jobNames.push(j);
+    if (jobNamesConfig[j].enabled) jobNames.push(j);
 }
 
 for (let i in jobNames) {

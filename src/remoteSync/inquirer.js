@@ -4,7 +4,6 @@ const configstore = require('conf');
 const gDriveInquirer = require('./gDrive/inquirer');
 const sftpInquirer = require('./sftp/inquirer');
 
-
 let askConfig = async (jobName) => {
     const jobConfStore = new configstore({configName: jobName});
     const jobConfigObj = jobConfStore.store;

@@ -89,7 +89,6 @@ let backupDatabase = async (jobName) => {
 };
 
 let backupCheck = async (jobName, isDebug) => {
-
     const jobConfStore = new configstore({configName: jobName});
     const jobConfObj = jobConfStore.store;
     const dbBackupPath = jobConfObj.dbBackupPath;
