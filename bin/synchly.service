@@ -16,6 +16,8 @@ After=network.target
 [Service]
 WorkingDirectory=/usr/local/lib/node_modules/synchly/bin/
 ExecStart=/usr/bin/node synchly --start
+Type=simple
+Restart=always
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
