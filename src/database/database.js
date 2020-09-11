@@ -29,7 +29,7 @@ const setupConfig = async (jobName, isDebug, filePath = undefined) => {
         jobConfStore.set(config);
         console.log('Database configuration updated successfully.');
 
-        return config;
+        return dbConnRes;
     } catch (err) {
         dbConnStatus.fail('Authentication failed');
         console.error('Database configuration update failed.');

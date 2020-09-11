@@ -53,6 +53,7 @@
     ],
     "dependencies": {
         "arg": "^4.1.3",
+        "cli-table3": "^0.6.0",
         "conf": "^6.2.4",
         "googleapis": "^49.0.0",
         "inquirer": "^7.1.0",

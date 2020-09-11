@@ -9,6 +9,7 @@ const configstore = require('conf');
 const packageJson = require('./../package.json');
 const files = require('./utils/files');
 const inquirer = require('./inquirer');
+const utils = require('./utils/utils');
 
 const defaultJobName = 'master';
 
@@ -24,6 +25,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '--file': String,
             '--help': Boolean,
             '--job': String,
+            '--jobs': Boolean,
             '--restore': Boolean,
             '--reset': Boolean,
             '--start': Boolean,
@@ -56,6 +58,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
         file: args['--file'],
         help: args['--help'],
         job: args['--job'],
+        jobs: args['--jobs'],
         restore: args['--restore'],
         reset: args['--reset'],
         start: args['--start'],
@@ -108,6 +111,10 @@ const cli = async (args) => {
             }
         }
 
+        if (options.jobs) {
+            printJobsList();
+        }
+
         if (
             !options.config &&
             !options.disablejob &&
@@ -116,6 +123,7 @@ const cli = async (args) => {
             !options.enable &&
             !options.file &&
             !options.help &&
+            !options.jobs &&
             !options.restore &&
             !options.reset &&
             !options.start &&
@@ -164,7 +172,9 @@ const cli = async (args) => {
 
         if (options.config == 'db') {
             let dbSetupRes = await db.setupConfig(jobName, isDebug, options.file);
-            let enableJobRes = await enableJob(jobName, isDebug);
+            if (dbSetupRes) {
+                let enableJobRes = await enableJob(jobName, isDebug);
+            }
         } else if (options.config == 'remote-sync') {
             let remoteSetupRes = await remoteSync.setupConfig(jobName, isDebug, options.file);
         } else if (options.config == 'smtp') {
@@ -287,6 +297,35 @@ const enableJob = async (jobName, isDebug) => {
         confStore.set(`${jobName}.enabled`, true);
         console.log('Success');
     }
+};
+
+const printJobsList = () => {
+    let jobsListTable = utils.createJobsListTable();
+    const confStore = new configstore();
+    const jobNamesConfig = confStore.store;
+    const statusEnabled = strings.moduleStatusEnabled;
+    const statusDisabled = strings.moduleStatusDisabled;
+    for (let currentJob in jobNamesConfig) {
+        const jobConfStore = new configstore({configName: currentJob});
+        const jobConfObj = jobConfStore.store;
+        const currJobStatus = jobNamesConfig[currentJob].enabled == true ? statusEnabled : statusDisabled;
+        const remoteSyncStatus = jobConfObj.remoteSyncEnabled == true ? statusEnabled : statusDisabled;
+        const smtpStatus = jobConfObj.smtpEnabled == true ? statusEnabled : statusDisabled;
+        const backupTime = new Date(jobConfObj.dbBackupTime).toTimeString().match(/([0-9]+:[0-9]+)/)[1];
+        const backupTimeTz = new Date(jobConfObj.dbBackupTime).toString().match(/([A-Z]+[\+-][0-9]+)/)[1];
+        const backupTimeString = `${backupTime} ${backupTimeTz}`;
+        jobsListTable.push([
+            currentJob,
+            currJobStatus,
+            jobConfObj.dbType,
+            jobConfObj.dbName,
+            backupTimeString,
+            remoteSyncStatus,
+            smtpStatus,
+        ]);
+    }
+
+    console.log(jobsListTable.toString());
 };
 
 module.exports = {
