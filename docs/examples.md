@@ -177,7 +177,7 @@ $ synchly --job exampleJob --config db
 
 All the options can be used along with the option `-j, --job` to make them job-specific.
 
-All jobs are disabled by default. Enable them before they can be run.
+All jobs are enabled by default. Enable stopped jobs before they can be run.
 
 ```
 $ synchly --enablejob --job exampleJob
@@ -189,7 +189,6 @@ Disable a job to stop it from running.
 $ synchly --disablejob --job exampleJob
 ```
 
-
 Reset all the saved configurations for a job using the option `--reset`.
 
 ```
@@ -200,4 +199,10 @@ Start all the enabled jobs using the option `--start`
 
 ```
 $ synchly --start
+```
+
+Show all the created jobs using the option `--jobs`
+
+```
+$ synchly --jobs
 ```

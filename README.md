@@ -74,9 +74,13 @@ If you use **Fish**, it appends a loader code to ~/.config/fish/config.fish file
 ```
 $ synchly [--config module]
 $ synchly [--config module] [--file filepath]
-$ synchly [--disable module]
+$ synchly [--disablejob] [--job exampleJob]
+$ synchly [--disable module] [--debug]
+$ synchly [--enablejob] [--job exampleJob]
 $ synchly [--enable module] [--stacktrace]
 $ synchly [--help]
+$ synchly [--job exampleJob] [--config module]
+$ synchly [--jobs]
 $ synchly [--reset]
 $ synchly [--restore]
 $ synchly [--start]
@@ -165,6 +169,12 @@ For creating multiple backup jobs, refer [Running multiple jobs](https://github.
         <td width="30%"><code>-j, --job</code></td>
         <td width="100%">
         <p>Create a new synchly job with the NAME (creates a job named 'master' by default if the option --job is not specified). This is useful for running multiple backup jobs in parallel</p>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%"><code>--jobs</code></td>
+        <td width="100%">
+        <p>Displays information about all the synchly jobs</p>
         </td>
     </tr>
     <tr>
