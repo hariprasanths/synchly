@@ -40,6 +40,7 @@ Automate database backups with customizable recurring schedules.
     * SFTP
 * **Status notifications** - Get daily status reports for successful and failed backups, delivered when you want them via SMTP to the specified email(s). Check [Usage](#usage) and the [List of Options](#list-of-options) below.
 * **Multiple Backup Jobs** - Run multiple backup jobs in parallel. 
+* **Encrypt Config files** - Encrypt job configuration files.
 
 ## Prerequisites
 
@@ -103,6 +104,8 @@ Initializing configurations can also be done using a file, `synchly --config=mod
 
 By default, remote-sync and smtp modules are disabled, to enable them, use `synchly --enable=module` command.
 
+To encyrpt the job configuration files use the command `synchly --enable=cipher` and to disable it globally use the command `synchly --disable=cipher`.
+
 For the complete list of options and their behavior, refer [List of options](#list-of-options).
 
 For running synchly as a daemon, refer [Running as a deamon](#running-as-a-daemon).
@@ -138,7 +141,7 @@ For creating multiple backup jobs, refer [Running multiple jobs](https://github.
     <tr>
         <td width="30%"><code>-d, --disable=module</code></td>
         <td width="100%">
-        <p>Disable a module. <br/> Allowed modules: remote-sync | smtp</p>
+        <p>Disable a module. <br/> Allowed modules: cipher | remote-sync | smtp</p>
         </td>
     </tr>
     <tr>
@@ -150,7 +153,7 @@ For creating multiple backup jobs, refer [Running multiple jobs](https://github.
     <tr>
         <td width="30%"><code>-e, --enable=module</code></td>
         <td width="100%">
-        <p>Enable a module. <br/> Allowed modules: remote-sync | smtp</p>
+        <p>Enable a module. <br/> Allowed modules: cipher | remote-sync | smtp</p>
         </td>
     </tr>
     <tr>

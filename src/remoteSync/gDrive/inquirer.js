@@ -4,8 +4,8 @@ const gDrive = require('./gDrive');
 const ora = require('ora');
 const configstore = require('conf');
 
-let askConfig = async (jobName) => {
-    const jobConfStore = new configstore({configName: jobName});
+let askConfig = async (jobName, key) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
 
     let questions = [];

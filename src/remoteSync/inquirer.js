@@ -4,8 +4,8 @@ const configstore = require('conf');
 const gDriveInquirer = require('./gDrive/inquirer');
 const sftpInquirer = require('./sftp/inquirer');
 
-let askConfig = async (jobName) => {
-    const jobConfStore = new configstore({configName: jobName});
+let askConfig = async (jobName, key) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
 
     let questions = [];
@@ -19,10 +19,10 @@ let askConfig = async (jobName) => {
 
     let retObj = await inquirer.prompt(questions);
     if (retObj.remoteType == 'Google Drive') {
-        let gdConfig = await gDriveInquirer.askConfig(jobName);
+        let gdConfig = await gDriveInquirer.askConfig(jobName, key);
         retObj = Object.assign(retObj, gdConfig);
     } else if (retObj.remoteType == 'SFTP') {
-        let sftpConfig = await sftpInquirer.askConfig(jobName);
+        let sftpConfig = await sftpInquirer.askConfig(jobName, key);
         retObj = Object.assign(retObj, sftpConfig);
     }
     return retObj;

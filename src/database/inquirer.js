@@ -4,8 +4,8 @@ const configstore = require('conf');
 const constants = require('../utils/constants');
 const strings = require('./../utils/strings');
 
-let askConfig = async (jobName) => {
-    const jobConfStore = new configstore({configName: jobName});
+let askConfig = async (jobName, key) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
 
     inquirer.registerPrompt('datetime', require('inquirer-datepicker-prompt'));
@@ -197,8 +197,8 @@ let askConfig = async (jobName) => {
     return dbConfig;
 };
 
-let askRestoreConfig = async (jobName) => {
-    const jobConfStore = new configstore({configName: jobName});
+let askRestoreConfig = async (jobName, key) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
     let questions = [];
     let fileList = [];
@@ -221,7 +221,7 @@ let askRestoreConfig = async (jobName) => {
     });
     questions.push({
         type: 'confirm',
-        name: 'restoreConfrimation',
+        name: 'restoreConfirmation',
         message: 'Restoring database from the backup will flush the existing database, are you sure want to conitnue ?',
     });
     let restoreConfig;
