@@ -8,10 +8,12 @@ const completion = omelette('synchly').tree({
         'smtp': ['--file', '--debug', '--stacktrace']
     },
     '--enable': {
+        'cipher': ['--debug', '--stacktrace'],
         'remote-sync': ['--debug', '--stacktrace'],
         'smtp': ['--debug', '--stacktrace']
     },
     '--disable':  {
+        'cipher': ['--debug', '--stacktrace'],
         'remote-sync': ['--debug', '--stacktrace'],
         'smtp': ['--debug', '--stacktrace']
     },

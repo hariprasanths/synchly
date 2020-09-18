@@ -10,6 +10,8 @@ const packageJson = require('./../package.json');
 const files = require('./utils/files');
 const inquirer = require('./inquirer');
 const utils = require('./utils/utils');
+const cipher = require('./cipher/cipher');
+const keytar = require('keytar');
 
 const defaultJobName = 'master';
 
@@ -67,7 +69,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
 };
 
 const configAllowedArgs = ['db', 'remote-sync', 'smtp'];
-const modAllowedArgs = ['remote-sync', 'smtp'];
+const modAllowedArgs = ['cipher', 'remote-sync', 'smtp'];
 
 const cli = async (args) => {
     let dbStatus;
@@ -92,10 +94,10 @@ const cli = async (args) => {
             console.log(strings.helpDesc);
             return;
         }
-
+        const key = await keytar.getPassword(strings.serviceName, strings.accountName);
         const confStore = new configstore();
         const jobName = options.job || defaultJobName;
-        let jobConfStore = new configstore({configName: jobName});
+        let jobConfStore = new configstore({configName: jobName, encryptionKey: key});
         const jobConfigObj = jobConfStore.store;
 
         if (options.reset) {
@@ -112,7 +114,7 @@ const cli = async (args) => {
         }
 
         if (options.jobs) {
-            printJobsList();
+            printJobsList(key);
         }
 
         if (
@@ -171,20 +173,20 @@ const cli = async (args) => {
         }
 
         if (options.config == 'db') {
-            let dbSetupRes = await db.setupConfig(jobName, isDebug, options.file);
+            let dbSetupRes = await db.setupConfig(jobName, key, isDebug, options.file);
             if (dbSetupRes) {
-                let enableJobRes = await enableJob(jobName, isDebug);
+                let enableJobRes = await enableJob(jobName, key, isDebug);
             }
         } else if (options.config == 'remote-sync') {
-            let remoteSetupRes = await remoteSync.setupConfig(jobName, isDebug, options.file);
+            let remoteSetupRes = await remoteSync.setupConfig(jobName, key, isDebug, options.file);
         } else if (options.config == 'smtp') {
-            let smtpSetupRes = await smtp.setupConfig(jobName, isDebug, options.file);
+            let smtpSetupRes = await smtp.setupConfig(jobName, key, isDebug, options.file);
         }
 
         if (options.enable == 'remote-sync') {
             if (!jobConfigObj.remoteSetupComplete) {
                 console.log('Finish the remote sync configuration below before enabling');
-                let remoteSetupRes = await remoteSync.setupConfig(jobName, isDebug);
+                let remoteSetupRes = await remoteSync.setupConfig(jobName, key, isDebug);
                 if (remoteSetupRes) {
                     console.log(`Enabling module 'remote-sync'`);
                     jobConfStore.set('remoteSyncEnabled', true);
@@ -200,7 +202,7 @@ const cli = async (args) => {
         } else if (options.enable == 'smtp') {
             if (!jobConfigObj.smtpSetupComplete) {
                 console.log('Finish the smtp configuration below before enabling');
-                let smtpSetupRes = await smtp.setupConfig(jobName, isDebug);
+                let smtpSetupRes = await smtp.setupConfig(jobName, key, isDebug);
                 if (smtpSetupRes) {
                     console.log(`Enabling module 'smtp'`);
                     jobConfStore.set('smtpEnabled', true);
@@ -212,6 +214,14 @@ const cli = async (args) => {
                 console.log(`Enabling module 'smtp'`);
                 jobConfStore.set('smtpEnabled', true);
                 console.log('Success');
+            }
+        } else if (options.enable == 'cipher') {
+            let securitySetup = null;
+            let config = confStore.store;
+            if (!config.isEncrypted) {
+                securitySetup = await cipher.setupConfig(isDebug);
+            } else {
+                console.log('Encyrption already enabled');
             }
         }
 
@@ -231,10 +241,18 @@ const cli = async (args) => {
                 jobConfStore.set('smtpEnabled', false);
                 console.log('Success');
             }
+        } else if (options.disable == 'cipher') {
+            let config = confStore.store;
+            let deleteConfig;
+            if (config.isEncrypted) {
+                deleteConfig = await cipher.deleteConfig(key);
+            } else {
+                console.log('Encryption already disabled');
+            }
         }
 
         if (options.enablejob) {
-            let enableJobRes = await enableJob(jobName, isDebug);
+            let enableJobRes = await enableJob(jobName, key, isDebug);
         }
 
         if (options.disablejob) {
@@ -255,13 +273,13 @@ const cli = async (args) => {
             for (let j in jobNamesConfig) {
                 if (jobNamesConfig[j].enabled) jobNames.push(j);
             }
-            backupScheduler(jobNames, isDebug);
+            backupScheduler(jobNames, key, isDebug);
         }
 
         if (options.restore) {
             let restoreSetup;
             if (jobConfigObj.dbSetupComplete) {
-                restoreSetup = await db.setupRestore(jobName, isDebug);
+                restoreSetup = await db.setupRestore(jobName, key, isDebug);
             } else {
                 console.log('Finish the db configuration before restoring from a backup');
             }
@@ -277,9 +295,9 @@ const cli = async (args) => {
     }
 };
 
-const enableJob = async (jobName, isDebug) => {
+const enableJob = async (jobName, key, isDebug) => {
     const confStore = new configstore();
-    const jobConfStore = new configstore({configName: jobName});
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
 
     if (!jobConfigObj.dbSetupComplete) {
@@ -299,14 +317,17 @@ const enableJob = async (jobName, isDebug) => {
     }
 };
 
-const printJobsList = () => {
+const printJobsList = (key) => {
     let jobsListTable = utils.createJobsListTable();
     const confStore = new configstore();
     const jobNamesConfig = confStore.store;
     const statusEnabled = strings.moduleStatusEnabled;
     const statusDisabled = strings.moduleStatusDisabled;
     for (let currentJob in jobNamesConfig) {
-        const jobConfStore = new configstore({configName: currentJob});
+        if (currentJob == 'isEncrypted') {
+            continue;
+        }
+        const jobConfStore = new configstore({configName: currentJob, encryptionKey: key});
         const jobConfObj = jobConfStore.store;
         const currJobStatus = jobNamesConfig[currentJob].enabled == true ? statusEnabled : statusDisabled;
         const remoteSyncStatus = jobConfObj.remoteSyncEnabled == true ? statusEnabled : statusDisabled;

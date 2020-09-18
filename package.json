@@ -58,6 +58,7 @@
         "googleapis": "^49.0.0",
         "inquirer": "^7.1.0",
         "inquirer-datepicker-prompt": "^0.4.2",
+        "keytar": "^6.0.1",
         "mongoose": "^5.9.11",
         "mysql": "^2.18.1",
         "node-cron": "^2.0.3",

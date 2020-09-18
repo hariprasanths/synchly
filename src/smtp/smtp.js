@@ -8,8 +8,8 @@ const ora = require('ora');
 const inquirer = require('./inquirer');
 const validator = require('./validator');
 
-const setupConfig = async (jobName, isDebug, filePath = undefined) => {
-    const jobConfStore = new configstore({configName: jobName});
+const setupConfig = async (jobName, key, isDebug, filePath = undefined) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     let smtpConnStatus = ora('Authenticating you, please wait...');
     try {
         let config;
@@ -18,13 +18,13 @@ const setupConfig = async (jobName, isDebug, filePath = undefined) => {
             smtpConnStatus.start();
             config = await validator.validateInitConfig(config);
         } else {
-            config = await inquirer.askConfig(jobName);
+            config = await inquirer.askConfig(jobName, key);
             smtpConnStatus.start();
         }
 
         const testEmailSub = `SMTP configuration updation successfull`;
         const testEmailBody = `Status notifications will be sent everyday to:<br/> ${config.smtpRecipientMail}`;
-        const smtpConnRes = await sendMail(jobName, testEmailSub, testEmailBody, config);
+        const smtpConnRes = await sendMail(jobName, key, testEmailSub, testEmailBody, config);
 
         smtpConnStatus.succeed('Authentication succeess');
 
@@ -47,8 +47,8 @@ const setupConfig = async (jobName, isDebug, filePath = undefined) => {
     }
 };
 
-let init = (jobName, smtpConfig = undefined) => {
-    const jobConfStore = new configstore({configName: jobName});
+let init = (jobName, key, smtpConfig = undefined) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     if (!smtpConfig) smtpConfig = jobConfStore.store;
 
     //port 587, 25 - not secure  & port 465 - secure
@@ -63,11 +63,11 @@ let init = (jobName, smtpConfig = undefined) => {
     });
 };
 
-let sendMail = async (jobName, subject, htmlBody, smtpConfig = undefined) => {
-    const jobConfStore = new configstore({configName: jobName});
+let sendMail = async (jobName, key, subject, htmlBody, smtpConfig = undefined) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     if (!smtpConfig) smtpConfig = jobConfStore.store;
 
-    let smtpTransport = init(jobName, smtpConfig);
+    let smtpTransport = init(jobName, key, smtpConfig);
 
     const mailOptions = {
         from: `Synchly backups <${smtpConfig.smtpSenderMail}>`,
@@ -82,8 +82,8 @@ let sendMail = async (jobName, subject, htmlBody, smtpConfig = undefined) => {
     return res;
 };
 
-let sendMailScheduler = (jobName, subject, htmlBody, isDebug) => {
-    const jobConfStore = new configstore({configName: jobName});
+let sendMailScheduler = (jobName, key, subject, htmlBody, isDebug) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
 
     const smtpNotifyTime = new Date(jobConfigObj.smtpNotifyTime);
@@ -101,7 +101,7 @@ let sendMailScheduler = (jobName, subject, htmlBody, isDebug) => {
 
     const sendMailTask = cron.schedule(cronExp, async () => {
         try {
-            let smtpRes = await sendMail(jobName, subject, htmlBody, jobConfigObj);
+            let smtpRes = await sendMail(jobName, key, subject, htmlBody, jobConfigObj);
         } catch (e) {
             console.error(`smtp: failed to send status mail: ${e.message}`);
             if (isDebug) {

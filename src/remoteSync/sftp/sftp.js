@@ -2,8 +2,8 @@ const client = require('ssh2-sftp-client');
 const configstore = require('conf');
 const path = require('path');
 
-const init = (jobName, sftpConfig = undefined) => {
-    const jobConfStore = new configstore({configName: jobName});
+const init = (jobName, key, sftpConfig = undefined) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     if (!sftpConfig) sftpConfig = jobConfStore.store;
 
     const config = {
@@ -16,11 +16,11 @@ const init = (jobName, sftpConfig = undefined) => {
     return config;
 };
 
-const exists = async (jobName, sftpConfig = undefined) => {
-    const jobConfStore = new configstore({configName: jobName});
+const exists = async (jobName, key, sftpConfig = undefined) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     if (!sftpConfig) sftpConfig = jobConfStore.store;
 
-    const config = init(jobName, sftpConfig);
+    const config = init(jobName, key, sftpConfig);
     let sftp = new client();
     let existsRes;
     let error;
@@ -41,11 +41,11 @@ const exists = async (jobName, sftpConfig = undefined) => {
     return existsRes;
 };
 
-const uploadFile = async (jobName, srcFileName, srcFilePath) => {
-    const jobConfStore = new configstore({configName: jobName});
+const uploadFile = async (jobName, key, srcFileName, srcFilePath) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const sftpConfig = jobConfStore.store;
 
-    const config = init(jobName, sftpConfig);
+    const config = init(jobName, key, sftpConfig);
     let sftp = new client();
     let uploadRes;
     let error;
@@ -62,11 +62,11 @@ const uploadFile = async (jobName, srcFileName, srcFilePath) => {
     return uploadRes;
 };
 
-const deleteFile = async (jobName, fileName) => {
-    const jobConfStore = new configstore({configName: jobName});
+const deleteFile = async (jobName, key, fileName) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const sftpConfig = jobConfStore.store;
 
-    const config = init(jobName, sftpConfig);
+    const config = init(jobName, key, sftpConfig);
     let sftp = new client();
     let deleteRes;
     let error;

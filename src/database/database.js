@@ -1,4 +1,3 @@
-const constants = require('./../utils/constants');
 const strings = require('./../utils/strings');
 const configstore = require('conf');
 const mongoDb = require('./mongoDb/mongoDb');
@@ -7,8 +6,8 @@ const inquirer = require('./inquirer');
 const ora = require('ora');
 const validator = require('./validator');
 
-const setupConfig = async (jobName, isDebug, filePath = undefined) => {
-    const jobConfStore = new configstore({configName: jobName});
+const setupConfig = async (jobName, key, isDebug, filePath = undefined) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     let dbConnStatus;
     dbConnStatus = ora('Authenticating you, please wait...');
     try {
@@ -18,7 +17,7 @@ const setupConfig = async (jobName, isDebug, filePath = undefined) => {
             dbConnStatus.start();
             config = await validator.validateInitConfig(config);
         } else {
-            config = await inquirer.askConfig(jobName);
+            config = await inquirer.askConfig(jobName, key);
             dbConnStatus.start();
         }
 
@@ -54,8 +53,8 @@ let connect = async (dbConfig) => {
     return resp;
 };
 
-let dump = async (jobName, backupDirName) => {
-    const jobConfStore = new configstore({configName: jobName});
+let dump = async (jobName, key, backupDirName) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
     const dbType = jobConfigObj.dbType;
 
@@ -68,13 +67,13 @@ let dump = async (jobName, backupDirName) => {
     return resp;
 };
 
-let setupRestore = async (jobName, isDebug) => {
-    const jobConfStore = new configstore({configName: jobName});
+let setupRestore = async (jobName, key, isDebug) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfigObj = jobConfStore.store;
     let restoreStatus = ora('Restoring, please wait...');
     try {
-        let restoreConfig = await inquirer.askRestoreConfig(jobName);
-        if (restoreConfig.restoreConfrimation) {
+        let restoreConfig = await inquirer.askRestoreConfig(jobName, key);
+        if (restoreConfig.restoreConfirmation) {
             let backupFileName = restoreConfig.backupFileName;
             restoreStatus.start();
             let dbRestoreRes = await restore(jobConfigObj, backupFileName);

@@ -34,8 +34,8 @@ Options:
       --start                   start all the enabled synchly jobs which logs to stdout and stderr
   -v, --version                 display version information and exit`;
 
-const statusReportTemplate = (jobName, dbSuccess, removedDirs, dbError, remoteSuccess, remoteError) => {
-    const jobConfStore = new configstore({configName: jobName});
+const statusReportTemplate = (jobName, key, dbSuccess, removedDirs, dbError, remoteSuccess, remoteError) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfObj = jobConfStore.store;
     const currentDateString = new Date().toDateString();
     const remoteStatus = jobConfObj.remoteSyncEnabled;
@@ -87,8 +87,8 @@ const statusReportTemplate = (jobName, dbSuccess, removedDirs, dbError, remoteSu
     return retString;
 };
 
-const statusReportLog = (jobName, dbSuccess, removedDirs, dbError, remoteSuccess, remoteError) => {
-    const jobConfStore = new configstore({configName: jobName});
+const statusReportLog = (jobName, key, dbSuccess, removedDirs, dbError, remoteSuccess, remoteError) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfObj = jobConfStore.store;
     const currentDateString = new Date().toDateString();
     const remoteSyncEnabled = jobConfObj.remoteSyncEnabled;
@@ -176,4 +176,6 @@ module.exports = {
     enableJobsWarning: 'Only enabled jobs are started, enable a job using synchly --enablejob --job=NAME',
     moduleStatusEnabled: 'enabled',
     moduleStatusDisabled: 'disabled',
+    serviceName: 'synchly-nodejs',
+    accountName: 'synchlyAdmin',
 };

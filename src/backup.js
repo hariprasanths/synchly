@@ -19,8 +19,8 @@ function getBackupDirName(jobName, date) {
     return backupDir;
 }
 
-let backupDatabase = async (jobName) => {
-    const jobConfStore = new configstore({configName: jobName});
+let backupDatabase = async (jobName, key) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfObj = jobConfStore.store;
     let deletedBackups = [];
 
@@ -35,7 +35,7 @@ let backupDatabase = async (jobName) => {
     const dbNoOfWeeks = Number(jobConfObj.dbNoOfWeeks);
     const dbNoOfMonths = Number(jobConfObj.dbNoOfMonths);
 
-    let dbDump = await db.dump(jobName, newBackupPath);
+    let dbDump = await db.dump(jobName, key, newBackupPath);
 
     let oldBackupDirs = [];
     if (currentDate.getDay() == 0) {
@@ -75,9 +75,9 @@ let backupDatabase = async (jobName) => {
 
     try {
         if (remoteSyncEnabled) {
-            let remoteUploadResp = await remoteSync.uploadFile(jobName, newBackupDir, newBackupPath);
+            let remoteUploadResp = await remoteSync.uploadFile(jobName, key, newBackupDir, newBackupPath);
             for (let j = 0; j < deletedBackups.length; j++) {
-                let remoteDeleteResp = await remoteSync.deleteFile(jobName, deletedBackups[j]);
+                let remoteDeleteResp = await remoteSync.deleteFile(jobName, key, deletedBackups[j]);
             }
         }
     } catch (err) {
@@ -88,8 +88,8 @@ let backupDatabase = async (jobName) => {
     return deletedBackups;
 };
 
-let backupCheck = async (jobName, isDebug) => {
-    const jobConfStore = new configstore({configName: jobName});
+let backupCheck = async (jobName, key, isDebug) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const jobConfObj = jobConfStore.store;
     const dbBackupPath = jobConfObj.dbBackupPath;
     const smtpEnabled = jobConfObj.smtpEnabled;
@@ -103,21 +103,29 @@ let backupCheck = async (jobName, isDebug) => {
     const currentDate = new Date();
     const newBackupDir = getBackupDirName(jobName, currentDate);
     try {
-        deletedBackups = await backupDatabase(jobName);
+        deletedBackups = await backupDatabase(jobName, key);
 
-        const statusReportLog = strings.statusReportLog(jobName, true, deletedBackups, undefined, true, undefined);
+        const statusReportLog = strings.statusReportLog(jobName, key, true, deletedBackups, undefined, true, undefined);
         console.log(statusReportLog);
 
         if (smtpEnabled) {
-            const htmlBody = strings.statusReportTemplate(jobName, true, deletedBackups, undefined, true, undefined);
-            smtp.sendMailScheduler(jobName, 'Daily Status Report', htmlBody, isDebug);
+            const htmlBody = strings.statusReportTemplate(
+                jobName,
+                key,
+                true,
+                deletedBackups,
+                undefined,
+                true,
+                undefined
+            );
+            smtp.sendMailScheduler(jobName, key, 'Daily Status Report', htmlBody, isDebug);
         }
     } catch (err) {
         let statusReportLog;
         if (err.isRemoteError) {
-            statusReportLog = strings.statusReportLog(jobName, true, deletedBackups, undefined, false, err);
+            statusReportLog = strings.statusReportLog(jobName, key, true, deletedBackups, undefined, false, err);
         } else {
-            statusReportLog = strings.statusReportLog(jobName, false, [], err, false, undefined);
+            statusReportLog = strings.statusReportLog(jobName, key, false, [], err, false, undefined);
         }
 
         console.log(statusReportLog);
@@ -125,11 +133,11 @@ let backupCheck = async (jobName, isDebug) => {
         if (smtpEnabled) {
             let htmlBody;
             if (err.isRemoteError) {
-                htmlBody = strings.statusReportTemplate(jobName, true, deletedBackups, undefined, false, err);
+                htmlBody = strings.statusReportTemplate(jobName, key, true, deletedBackups, undefined, false, err);
             } else {
-                htmlBody = strings.statusReportTemplate(jobName, false, [], err, false, undefined);
+                htmlBody = strings.statusReportTemplate(jobName, key, false, [], err, false, undefined);
             }
-            smtp.sendMailScheduler(jobName, 'Daily Status Report', htmlBody, isDebug);
+            smtp.sendMailScheduler(jobName, key, 'Daily Status Report', htmlBody, isDebug);
         }
     }
 };

@@ -2,8 +2,8 @@ const {google} = require('googleapis');
 const configstore = require('conf');
 const fs = require('fs');
 
-let init = (jobName, googleCreds = undefined) => {
-    const jobConfStore = new configstore({configName: jobName});
+let init = (jobName, key, googleCreds = undefined) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     if (!googleCreds) googleCreds = jobConfStore.store;
     else {
         googleCreds = require(googleCreds.gDriveServiceAccKeyLoc);
@@ -14,14 +14,14 @@ let init = (jobName, googleCreds = undefined) => {
     return (drive = google.drive({version: 'v3', auth: gDriveAuth}));
 };
 
-let cloneServiceAccKey = async (jobName, serviceKeyLoc) => {
-    const jobConfStore = new configstore({configName: jobName});
+let cloneServiceAccKey = async (jobName, key, serviceKeyLoc) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     const googleCreds = require(serviceKeyLoc);
     return await jobConfStore.set(googleCreds);
 };
 
-let listFolders = async (jobName, gdConfig) => {
-    let drive = init(jobName, gdConfig);
+let listFolders = async (jobName, key, gdConfig) => {
+    let drive = init(jobName, key, gdConfig);
     let res = await drive.files.list({
         q: "mimeType = 'application/vnd.google-apps.folder'",
     });
@@ -29,9 +29,9 @@ let listFolders = async (jobName, gdConfig) => {
     return files;
 };
 
-let uploadFile = async (jobName, fileName, filePath) => {
-    const jobConfStore = new configstore({configName: jobName});
-    let drive = init(jobName);
+let uploadFile = async (jobName, key, fileName, filePath) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
+    let drive = init(jobName, key);
     let res = await drive.files.create({
         requestBody: {
             name: fileName,
@@ -48,9 +48,9 @@ let uploadFile = async (jobName, fileName, filePath) => {
     return res;
 };
 
-let deleteFile = async (jobName, fileName) => {
-    const jobConfStore = new configstore({configName: jobName});
-    let drive = init(jobName);
+let deleteFile = async (jobName, key, fileName) => {
+    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
+    let drive = init(jobName, key);
     let fileId = jobConfStore.get(fileName);
     let res = await drive.files.delete({fileId: fileId});
     jobConfStore.delete(fileName);
