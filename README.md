@@ -41,6 +41,7 @@ Automate database backups with customizable recurring schedules.
 * **Status notifications** - Get daily status reports for successful and failed backups, delivered when you want them via SMTP to the specified email(s). Check [Usage](#usage) and the [List of Options](#list-of-options) below.
 * **Multiple Backup Jobs** - Run multiple backup jobs in parallel. 
 * **Encrypt Config files** - Encrypt job configuration files.
+* **Multiplatform Support** - Run on any platform (Linux, Windows, macOS) which can run Node JS.
 
 ## Prerequisites
 
