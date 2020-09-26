@@ -51,7 +51,7 @@ const uploadFile = async (jobName, key, srcFileName, srcFilePath) => {
     let error;
     try {
         const connectRes = await sftp.connect(config);
-        const remoteFilePath = path.join(sftpConfig.sftpBackupPath, srcFileName);
+        const remoteFilePath = path.join(sftpConfig.sftpBackupPath, srcFileName).replace(/\\/g, '/');
         uploadRes = await sftp.put(srcFilePath, remoteFilePath);
     } catch (err) {
         error = err;
@@ -72,7 +72,7 @@ const deleteFile = async (jobName, key, fileName) => {
     let error;
     try {
         const connectRes = await sftp.connect(config);
-        const remoteFilePath = path.join(sftpConfig.sftpBackupPath, fileName);
+        const remoteFilePath = path.join(sftpConfig.sftpBackupPath, fileName).replace(/\\/g, '/');
         deleteRes = await sftp.delete(remoteFilePath);
     } catch (err) {
         error = err;

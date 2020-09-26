@@ -41,7 +41,7 @@ const statusReportTemplate = (jobName, key, dbSuccess, removedDirs, dbError, rem
     const remoteStatus = jobConfObj.remoteSyncEnabled;
     const dbType = jobConfObj.dbType;
     const dbName = jobConfObj.dbName;
-    let retString = `<p>Job '${jobName}' - Daily Status Report:&nbsp;</p>`;
+    let retString = `<p><h3>Job '${jobName}' - Daily Status Report:&nbsp;</h3></p>`;
 
     if (dbSuccess) {
         retString += `<p>Backup of ${dbType} database ${dbName} on ${currentDateString} completed successfully.</p>`;
@@ -58,7 +58,7 @@ const statusReportTemplate = (jobName, key, dbSuccess, removedDirs, dbError, rem
         }
 
         retString += `<p>&nbsp;</p>
-        <h3><strong>Remote-Sync:</strong></h3>`;
+        <strong>Remote-Sync:</strong>`;
 
         if (remoteStatus) {
             if (remoteSuccess) {
