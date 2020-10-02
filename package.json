@@ -23,6 +23,9 @@
         "fmt": "prettier --print-width 120 --no-bracket-spacing --single-quote --tab-width 4 --write scripts src",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "pre-commit": [
+        "fmt"
+    ],
     "bin": {
         "synchly": "bin/synchly"
     },
@@ -68,6 +71,7 @@
         "ssh2-sftp-client": "^5.1.2"
     },
     "devDependencies": {
+        "pre-commit": "^1.2.2",
         "prettier": "^2.0.5"
     }
 }
