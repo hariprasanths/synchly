@@ -70,6 +70,7 @@ const deleteConfig = async (key) => {
                 let jobConfStore = new configstore({configName: currentJob, encryptionKey: key});
                 let jobConfigObj = jobConfStore.store;
                 jobConfStore = new configstore({configName: currentJob, encryptionKey: null});
+                jobConfigObj.backupEncryptionEnabled = false;
                 jobConfStore.set(jobConfigObj);
             }
             deleteConfigStatus.succeed('Success');

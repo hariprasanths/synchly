@@ -119,6 +119,16 @@ let askConfig = async (jobName, key) => {
             }
         },
     });
+    questions.push({
+        type: 'confirm',
+        name: 'backupEncryptionEnabled',
+        message: 'Do you want the backup files to be encrypted?',
+        when: function () {
+            if (key) {
+                return true;
+            }
+        },
+    });
 
     questions.push({
         type: 'confirm',

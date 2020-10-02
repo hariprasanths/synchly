@@ -1,5 +1,6 @@
 const configstore = require('conf');
 const utils = require('./utils');
+const constants = require('./constants');
 
 const usageInfo = `usage: synchly [--config module]
 usage: synchly [--config module] [--file filepath]
@@ -178,4 +179,5 @@ module.exports = {
     moduleStatusDisabled: 'disabled',
     serviceName: 'synchly-nodejs',
     accountName: 'synchlyAdmin',
+    encryptionTag: 'bETr',
 };

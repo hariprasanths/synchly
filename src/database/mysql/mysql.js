@@ -3,7 +3,7 @@ const exec = require('./../../utils/await-exec');
 const isGzip = require('./../../utils/isGzip');
 const files = require('./../../utils/files');
 const path = require('path');
-const {promisify} = require('util');
+const encryptionCheck = require('../../utils/isEncrypted');
 
 let awaitMysqlConnect = (connection) => {
     return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ let connect = async (dbConfig) => {
     return connRes;
 };
 
-let dump = async (dbConfig, backupPath) => {
+let dump = async (dbConfig, key, backupPath) => {
     const mysqlDumpCmd = `mysqldump \
     --host=${dbConfig.dbHost} \
     --port=${dbConfig.dbPort} \
@@ -58,18 +58,27 @@ let dump = async (dbConfig, backupPath) => {
     let dbDump = await exec(mysqlDumpCmd);
 
     if (dbConfig.dbIsCompressionEnabled) {
-        const compressFileRes = await files.compressFile(backupPath);
+        await files.compressFile(backupPath);
     }
-
+    if (dbConfig.backupEncryptionEnabled) {
+        await files.encrypt(backupPath, key);
+    }
     return dbDump;
 };
 
-let restore = async (dbConfig, backupFilename) => {
+let restore = async (dbConfig, key, backupFilename) => {
     let backupFilePath = path.join(dbConfig.dbBackupPath, backupFilename);
+    let decryptFileName;
+    let isEncrypted = await encryptionCheck.isEncrypted(backupFilePath);
+    if (isEncrypted) {
+        await files.decrypt(backupFilePath, key);
+        backupFilePath = `${backupFilePath}_unenc`;
+        decryptFileName = backupFilePath;
+    }
     let isCompressed = isGzip(backupFilePath);
     if (isCompressed) {
-        const decompressFileRes = await files.decompressFile(backupFilePath);
-        backupFilePath = backupFilePath + '.sql';
+        await files.decompressFile(backupFilePath);
+        backupFilePath = `${backupFilePath}.sql`;
     }
     const mysqlDumpCmd = `mysql \
     --host=${dbConfig.dbHost} \
@@ -87,6 +96,9 @@ let restore = async (dbConfig, backupFilename) => {
     } finally {
         if (isCompressed) {
             files.deleteFile(backupFilePath);
+        }
+        if (isEncrypted) {
+            files.deleteFile(decryptFileName);
         }
     }
 };
