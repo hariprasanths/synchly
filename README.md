@@ -40,8 +40,7 @@ Automate database backups with customizable recurring schedules.
     * SFTP
 * **Status notifications** - Get daily status reports for successful and failed backups, delivered when you want them via SMTP to the specified email(s). Check [Usage](#usage) and the [List of Options](#list-of-options) below.
 * **Multiple Backup Jobs** - Run multiple backup jobs in parallel. 
-* **Encrypt Config files** - Encrypt job configuration files.
-* **Multiplatform Support** - Run on any platform (Linux, Windows, macOS) which can run Node JS.
+* **Encryption** - Encrypt the job configuration and backup files.
 
 ## Prerequisites
 
@@ -106,6 +105,7 @@ Initializing configurations can also be done using a file, `synchly --config=mod
 By default, remote-sync and smtp modules are disabled, to enable them, use `synchly --enable=module` command.
 
 To encyrpt the job configuration files use the command `synchly --enable=cipher` and to disable it globally use the command `synchly --disable=cipher`.
+Encryption of backup files can be done only when cipher module is enabled.
 
 For the complete list of options and their behavior, refer [List of options](#list-of-options).
 

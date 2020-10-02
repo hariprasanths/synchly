@@ -20,7 +20,6 @@ const setupConfig = async (jobName, key, isDebug, filePath = undefined) => {
             config = await inquirer.askConfig(jobName, key);
             dbConnStatus.start();
         }
-
         const dbConnRes = await connect(config);
         dbConnStatus.succeed('Authentication success');
 
@@ -60,9 +59,9 @@ let dump = async (jobName, key, backupDirName) => {
 
     let resp;
     if (dbType == 'MongoDB') {
-        resp = await mongoDb.dump(jobConfigObj, backupDirName);
+        resp = await mongoDb.dump(jobConfigObj, key, backupDirName);
     } else if (dbType == 'MySQL') {
-        resp = await mysql.dump(jobConfigObj, backupDirName);
+        resp = await mysql.dump(jobConfigObj, key, backupDirName);
     }
     return resp;
 };
@@ -76,7 +75,7 @@ let setupRestore = async (jobName, key, isDebug) => {
         if (restoreConfig.restoreConfirmation) {
             let backupFileName = restoreConfig.backupFileName;
             restoreStatus.start();
-            let dbRestoreRes = await restore(jobConfigObj, backupFileName);
+            let dbRestoreRes = await restore(jobConfigObj, key, backupFileName);
             restoreStatus.succeed('Restore success');
             return dbRestoreRes;
         }
@@ -94,13 +93,13 @@ let setupRestore = async (jobName, key, isDebug) => {
     }
 };
 
-let restore = async (dbConfig, backupFileName) => {
+let restore = async (dbConfig, key, backupFileName) => {
     let resp;
     const dbType = dbConfig.dbType;
     if (dbType == 'MongoDB') {
-        resp = await mongoDb.restore(dbConfig, backupFileName);
+        resp = await mongoDb.restore(dbConfig, key, backupFileName);
     } else if (dbType == 'MySQL') {
-        resp = await mysql.restore(dbConfig, backupFileName);
+        resp = await mysql.restore(dbConfig, key, backupFileName);
     }
     return resp;
 };

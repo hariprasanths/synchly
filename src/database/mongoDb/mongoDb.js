@@ -3,6 +3,8 @@ const mongoUriBuilder = require('./mongoUriBuilder');
 const exec = require('./../../utils/await-exec');
 const isGzip = require('./../../utils/isGzip');
 const path = require('path');
+const files = require('../../utils/files');
+const encryptionCheck = require('../../utils/isEncrypted');
 
 let connect = async (dbConfig) => {
     let connectionUri = mongoUriBuilder({
@@ -18,7 +20,7 @@ let connect = async (dbConfig) => {
     return connRes;
 };
 
-let dump = async (dbConfig, backupPath) => {
+let dump = async (dbConfig, key, backupPath) => {
     let mongoDumpCmd;
 
     if (dbConfig.dbIsCompressionEnabled) {
@@ -39,13 +41,20 @@ let dump = async (dbConfig, backupPath) => {
         --password ${dbConfig.dbAuthPwd} \
         --archive=${backupPath}`;
     }
-
     let dbDump = await exec(mongoDumpCmd);
+    if (dbConfig.backupEncryptionEnabled) {
+        await files.encrypt(backupPath, key);
+    }
     return dbDump;
 };
 
-let restore = async (dbConfig, backupFilename) => {
+let restore = async (dbConfig, key, backupFilename) => {
     let backupFilePath = path.join(dbConfig.dbBackupPath, backupFilename);
+    let isEncrypted = await encryptionCheck.isEncrypted(backupFilePath);
+    if (isEncrypted) {
+        await files.decrypt(backupFilePath, key);
+        backupFilePath = `${backupFilePath}_unenc`;
+    }
     let isCompressed = isGzip(backupFilePath);
     let mongoRestoreCmd;
     if (isCompressed) {
@@ -64,6 +73,9 @@ let restore = async (dbConfig, backupFilename) => {
     }
 
     let dbRestore = await exec(mongoRestoreCmd);
+    if (isEncrypted) {
+        files.deleteFile(backupFilePath);
+    }
     return dbRestore;
 };
 
