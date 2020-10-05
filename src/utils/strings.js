@@ -13,6 +13,7 @@ usage: synchly [--job exampleJob] [--config module]
 usage: synchly [--jobs]
 usage: synchly [--reset]
 usage: synchly [--restore]
+uasge: synchly [--run]
 usage: synchly [--start]
 usage: synchly [--version]`;
 
@@ -31,6 +32,7 @@ Options:
       --jobs                    displays information about all the created synchly jobs
       --reset                   reset all the configurations saved
   -R  --restore                 restore database from the backup    
+      --run                     backup database forthwith
   -S, --stacktrace              prints even more information about errors from CLI operation, used for debugging purposes. If you find a bug, provide output generated with the --stacktrace or --debug flag on when submitting a bug report
       --start                   start all the enabled synchly jobs which logs to stdout and stderr
   -v, --version                 display version information and exit`;

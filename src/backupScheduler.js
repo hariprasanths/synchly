@@ -17,7 +17,7 @@ let cronScheduler = (jobNames, key, isDebug) => {
         const backupMinutes = backupTime.getMinutes();
         const cronExp = `${backupMinutes} ${backupHours} * * *`;
         cron.schedule(cronExp, () => {
-            backupDb(currentJob, key, isDebug);
+            backupDb.backupCheck(currentJob, key, isDebug);
         });
     }
 

@@ -243,8 +243,9 @@ var getJobSpecificBackups = (jobName, fileList) => {
     let choices = [];
     for (let index in fileList) {
         let fileName = fileList[index];
-        let jobNameComparator = fileName.split(constants.DB_BACKUP_DIR_PREFIX);
-        if (jobNameComparator[0] == jobName) {
+        let jobNameAutomatic = fileName.split(constants.DB_BACKUP_DIR_PREFIX);
+        let jobNameManual = fileName.split(constants.DB_MANUAL_BACKUP_DIR_PREFIX);
+        if (jobNameAutomatic[0] == jobName || jobNameManual[0] == jobName) {
             choices.push(fileName);
         }
     }
