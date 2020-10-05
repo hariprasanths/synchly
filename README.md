@@ -84,6 +84,7 @@ $ synchly [--job exampleJob] [--config module]
 $ synchly [--jobs]
 $ synchly [--reset]
 $ synchly [--restore]
+$ synchly [--run]
 $ synchly [--start]
 $ synchly [--version]
 ```

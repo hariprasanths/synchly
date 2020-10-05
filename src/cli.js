@@ -12,6 +12,7 @@ const inquirer = require('./inquirer');
 const utils = require('./utils/utils');
 const cipher = require('./cipher/cipher');
 const keytar = require('keytar');
+const backupDb = require('./backup');
 
 const defaultJobName = 'master';
 
@@ -30,6 +31,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
             '--jobs': Boolean,
             '--restore': Boolean,
             '--reset': Boolean,
+            '--run': Boolean,
             '--start': Boolean,
             '--stacktrace': Boolean,
             '--version': Boolean,
@@ -63,6 +65,7 @@ const parseArgumentsIntoOptions = (rawArgs) => {
         jobs: args['--jobs'],
         restore: args['--restore'],
         reset: args['--reset'],
+        run: args['--run'],
         start: args['--start'],
         version: args['--version'],
     };
@@ -128,6 +131,7 @@ const cli = async (args) => {
             !options.jobs &&
             !options.restore &&
             !options.reset &&
+            !options.run &&
             !options.start &&
             !options.version
         ) {
@@ -266,7 +270,13 @@ const cli = async (args) => {
                 console.log('Success');
             }
         }
-
+        if (options.run) {
+            if (!jobConfigObj.dbSetupComplete) {
+                console.error(`Job '${jobName}' does not exist!`);
+            } else {
+                await backupDb.instantBackup(jobName, key, isDebug);
+            }
+        }
         if (options.start) {
             const jobNamesConfig = confStore.store;
             let jobNames = [];

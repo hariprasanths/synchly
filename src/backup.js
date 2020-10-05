@@ -6,6 +6,8 @@ const files = require('./utils/files');
 const db = require('./database/database');
 const remoteSync = require('./remoteSync/remoteSync');
 const smtp = require('./smtp/smtp');
+const database = require('./database/database');
+const ora = require('ora');
 
 const dtf = new Intl.DateTimeFormat('en', {year: 'numeric', month: '2-digit', day: '2-digit'});
 
@@ -13,9 +15,14 @@ function isFirstSunday(date) {
     return date.getDay() == 0 && date.getDate() <= 7 ? true : false;
 }
 
-function getBackupDirName(jobName, date) {
+function getBackupDirName(jobName, date, isInstant) {
     let [{value: mo}, , {value: da}, , {value: ye}] = dtf.formatToParts(date);
-    const backupDir = `${jobName}${constants.DB_BACKUP_DIR_PREFIX}${mo}-${da}-${ye}`;
+    let backupDir;
+    if (!isInstant) {
+        backupDir = `${jobName}${constants.DB_BACKUP_DIR_PREFIX}${mo}-${da}-${ye}`;
+    } else {
+        backupDir = `${jobName}${constants.DB_MANUAL_BACKUP_DIR_PREFIX}${mo}-${da}-${ye}`;
+    }
     return backupDir;
 }
 
@@ -142,4 +149,34 @@ let backupCheck = async (jobName, key, isDebug) => {
     }
 };
 
-module.exports = backupCheck;
+let instantBackup = async (jobName, key, isDebug) => {
+    let instantBackupStatus = ora('Backup in progress, please wait...');
+    try {
+        const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
+        const jobConfObj = jobConfStore.store;
+        const remoteSyncEnabled = jobConfObj.remoteSyncEnabled;
+        const backupPath = jobConfObj.dbBackupPath;
+        const currentDate = new Date();
+        const backupFileName = getBackupDirName(jobName, currentDate, true);
+        const absoluteBackupPath = path.join(backupPath, backupFileName);
+        instantBackupStatus.start();
+        await database.dump(jobName, key, absoluteBackupPath);
+        if (remoteSyncEnabled) {
+            await remoteSync.uploadFile(jobName, key, backupFileName, absoluteBackupPath);
+        }
+        instantBackupStatus.succeed('Success');
+    } catch (err) {
+        instantBackupStatus.fail('Failed');
+        if (isDebug) {
+            console.error('Stacktrace:');
+            console.error(error);
+        } else {
+            console.error(strings.debugModeDesc);
+        }
+    }
+};
+
+module.exports = {
+    backupCheck,
+    instantBackup,
+};
