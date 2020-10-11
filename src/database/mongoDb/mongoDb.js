@@ -13,6 +13,9 @@ let connect = async (dbConfig) => {
         host: dbConfig.dbHost,
         port: dbConfig.dbPort,
         database: dbConfig.dbName,
+        options: {
+            authSource: dbConfig.dbAuthSource,
+        },
     });
 
     let connRes = await mongoose.connect(connectionUri, {useNewUrlParser: true, useUnifiedTopology: true});
@@ -30,6 +33,7 @@ let dump = async (dbConfig, key, backupPath) => {
         --port ${dbConfig.dbPort} \
         --username ${dbConfig.dbAuthUser} \
         --password ${dbConfig.dbAuthPwd} \
+        --authenticationDatabase ${dbConfig.dbAuthSource} \
         --gzip \
         --archive=${backupPath}`;
     } else {
@@ -39,6 +43,7 @@ let dump = async (dbConfig, key, backupPath) => {
         --port ${dbConfig.dbPort} \
         --username ${dbConfig.dbAuthUser} \
         --password ${dbConfig.dbAuthPwd} \
+        --authenticationDatabase ${dbConfig.dbAuthSource} \
         --archive=${backupPath}`;
     }
     let dbDump = await exec(mongoDumpCmd);
@@ -59,24 +64,35 @@ let restore = async (dbConfig, key, backupFilename) => {
     let mongoRestoreCmd;
     if (isCompressed) {
         mongoRestoreCmd = `mongorestore \
-        --db ${dbConfig.dbName} \
-        --host ${dbConfig.dbHost}:${dbConfig.dbPort} \
+        --host ${dbConfig.dbHost} \
+        --port ${dbConfig.dbPort} \
+        --username ${dbConfig.dbAuthUser} \
+        --password ${dbConfig.dbAuthPwd} \
+        --authenticationDatabase ${dbConfig.dbAuthSource} \
         --drop \
         --gzip \
         --archive=${backupFilePath}`;
     } else {
         mongoRestoreCmd = `mongorestore \
-        --db ${dbConfig.dbName} \
-        --host ${dbConfig.dbHost}:${dbConfig.dbPort} \
+        --host ${dbConfig.dbHost} \
+        --port ${dbConfig.dbPort} \
+        --username ${dbConfig.dbAuthUser} \
+        --password ${dbConfig.dbAuthPwd} \
+        --authenticationDatabase ${dbConfig.dbAuthSource} \
         --drop \
         --archive=${backupFilePath}`;
     }
 
-    let dbRestore = await exec(mongoRestoreCmd);
-    if (isEncrypted) {
-        files.deleteFile(backupFilePath);
+    try {
+        let dbRestore = await exec(mongoRestoreCmd);
+        return dbRestore;
+    } catch (e) {
+        throw e;
+    } finally {
+        if (isEncrypted) {
+            files.deleteFile(backupFilePath);
+        }
     }
-    return dbRestore;
 };
 
 module.exports = {

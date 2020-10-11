@@ -10,6 +10,7 @@ $ synchly --config db
 ? Enter the database hostname: localhost
 ? Enter the database server port: 27017
 ? Enter the database name to backup: foobar
+? Enter the database name associated with the user credentials (i.e. authSource): admin
 ? Enter the absolute path of the directory for storing local backups: /home/foobar/backups/
 ? Do you want the backup files to be encrypted? Yes
 ? Do you want to enable backup compression? Yes
