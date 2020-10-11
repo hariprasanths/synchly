@@ -100,6 +100,23 @@ let askConfig = async (jobName, key) => {
     });
 
     questions.push({
+        name: 'dbAuthSource',
+        type: 'input',
+        message: 'Enter the database name associated with the user credentials (i.e. authSource):',
+        default: 'admin',
+        validate: function (value) {
+            if (value.length) {
+                return true;
+            } else {
+                return 'Please enter the database name associated with the user credentials.';
+            }
+        },
+        when: function (answers) {
+            return answers.dbType == 'MongoDB';
+        },
+    });
+
+    questions.push({
         name: 'dbBackupPath',
         type: 'input',
         message: 'Enter the absolute path of the directory for storing local backups:',

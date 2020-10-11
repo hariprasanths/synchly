@@ -7,6 +7,7 @@ const dbConfigKeys = {
     dbHost: 'host',
     dbPort: 'port',
     dbName: 'databaseName',
+    dbAuthSource: 'authSource',
     dbBackupPath: 'backupPath',
     dbIsCompressionEnabled: 'enableCompression',
     dbBackupTime: 'backupTime',
@@ -53,6 +54,13 @@ const validateInitConfig = async (config) => {
         throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbName}'`);
     }
     validatedConfig.dbName = config[dbConfigKeys.dbName];
+
+    if (validatedConfig.dbType == 'MongoDB') {
+        if (!config[dbConfigKeys.dbAuthSource]) {
+            throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbAuthSource}'`);
+        }
+    }
+    validatedConfig.dbAuthSource = config[dbConfigKeys.dbAuthSource];
 
     if (!config[dbConfigKeys.dbBackupPath]) {
         throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbBackupPath}'`);

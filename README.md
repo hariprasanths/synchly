@@ -195,6 +195,12 @@ For creating multiple backup jobs, refer [Running multiple jobs](https://github.
         </td>
     </tr>
     <tr>
+        <td width="30%"><code>--run</code></td>
+        <td width="100%">
+        <p>Take a database backup forthwith</p>
+        </td>
+    </tr>
+    <tr>
         <td width="30%"><code>-S, --stacktrace</code></td>
         <td width="100%">
         <p>Prints even more information about errors from CLI operation, used for debugging purposes. If you find a bug, provide output generated with the --stacktrace flag on when submitting a bug report</p>
