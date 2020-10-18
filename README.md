@@ -273,7 +273,7 @@ If installed using yarn global, the service init files will be located on
 
 ## Contributing
 
-I'd love your help! If you have ideas for new features or feedback, let me know by creating an issue in the [issues list](https://github.com/hariprasanths/synchly/issues).
+Read our Contribution Guidelines for information on how you can help out [Synchly](https://github.com/hariprasanths/synchly/blob/master/docs/contributing.md)
 
 ## Show your support
 
