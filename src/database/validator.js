@@ -22,7 +22,7 @@ const validateInitConfig = async (config) => {
     if (!config[dbConfigKeys.dbType]) {
         throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbType}'`);
     }
-    if (!['MongoDB', 'MySQL'].includes(config[dbConfigKeys.dbType])) {
+    if (!['MongoDB', 'MySQL', 'PostgreSQL'].includes(config[dbConfigKeys.dbType])) {
         throw new Error(`Invalid config: Unrecognised '${dbConfigKeys.dbType}' - ${config[dbConfigKeys.dbType]}`);
     }
     validatedConfig.dbType = config[dbConfigKeys.dbType];
