@@ -7,7 +7,7 @@ For initializing a module configuration using a file, you'll need a JSON file of
 **/home/foo/dbConfig.json:**
 ```
 {
-    "databaseType": <database type (MySQL | MongoDB)>,
+    "databaseType": <database type (MySQL | MongoDB | PostgreSQL)>,
     "username": <database username>,
     "password": <database password>,
     "host": <database hostname>,

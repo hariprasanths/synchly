@@ -32,6 +32,7 @@ Automate database backups with customizable recurring schedules.
 * **Supported Databases**
     * MySQL
     * MongoDB
+    * PostgreSQL
 * **Compression** - Compress the database backups to save up space.
 * **Cloud Storage Integration** - Sync the local backups to remote storage of your choice.
 * **Restoration** - Restore the database from the backups.
@@ -261,6 +262,7 @@ If installed using yarn global, the service init files will be located on
 * [Database configuration](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#database-configuration)
     * [MongoDB](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#mongodb)
     * [MySQL](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#mysql)
+    * [PostgreSQL] (https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#postgresql)
 * [Cloud Storage (remote-sync) configuration](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#cloud-storage-remote-sync-configuration)
     * [Google Drive](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#google-drive)
     * [SFTP](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#sftp)
