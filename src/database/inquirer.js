@@ -71,7 +71,7 @@ let askConfig = async (jobName, key) => {
             let defaultPort;
             if (ans.dbType == 'MongoDB') defaultPort = '27017';
             else if (ans.dbType == 'MySQL') defaultPort = '3306';
-            else if(ans.dpType == 'PostgreSQL') defaultPort = '5432';
+            else if(ans.dbType == 'PostgreSQL') defaultPort = '5432';
             return jobConfigObj.dbPort || defaultPort;
         },
         validate: function (value) {
