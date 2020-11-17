@@ -45,11 +45,7 @@ let connect = async (dbConfig) => {
 };
 
 let dump = async (dbConfig, key, backupPath) => {
-    const postgresqlDumpCmd = `PGPASSWORD=${dbConfig.dbAuthPwd} \
-    pg_dump --host=${dbConfig.dbHost} \
-    --port=${dbConfig.dbPort} \
-    --username=${dbConfig.dbAuthUser} \
-    --dbname=${dbConfig.dbName} \
+    const postgresqlDumpCmd = `pg_dump --dbname=postgresql://${dbConfig.dbAuthUser}:${dbConfig.dbAuthPwd}@${dbConfig.dbHost}:${dbConfig.dbPort}/${dbConfig.dbName} \
     --compress=0..9 \
     --format=c
     > ${backupPath}`;
@@ -79,12 +75,7 @@ let restore = async (dbConfig, key, backupFilename) => {
         await files.decompressFile(backupFilePath);
         backupFilePath = `${backupFilePath}.sql`;
     }
-    const postgresqlRestoreCmd = `PGPASSWORD=${dbConfig.dbAuthPwd} \
-    pg_restore --host=${dbConfig.dbHost} \
-    --port=${dbConfig.dbPort} \
-    --dbname=${dbConfig.dbAuthPwd} \
-    --username=${dbConfig.dbAuthUser} \
-    --port=${dbConfig.dbAuthPwd} \
+    const postgresqlRestoreCmd = `pg_restore --dbname=postgresql://${dbConfig.dbAuthUser}:${dbConfig.dbAuthPwd}@${dbConfig.dbHost}:${dbConfig.dbPort}/${dbConfig.dbName} \
     < ${backupFilePath}`;
     try {
         let dbRestore = await exec(postgresqlRestoreCmd);
