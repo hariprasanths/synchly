@@ -3,7 +3,6 @@ const configstore = require('conf');
 const mongoDb = require('./mongoDb/mongoDb');
 const mysql = require('./mysql/mysql');
 const postgresql = require('./postgresql/postgresql');
-const redis = require('./redis/redis');
 const inquirer = require('./inquirer');
 const ora = require('ora');
 const validator = require('./validator');
@@ -52,8 +51,6 @@ let connect = async (dbConfig) => {
         resp = await mysql.connect(dbConfig);
     } else if (dbConfig.dbType == 'PostgreSQL') {
         resp = await postgresql.connect(dbConfig);
-    } else if (dbConfig.dbType == 'Redis') {
-        resp = await redis.connect(dbConfig);
     }
     return resp;
 };
@@ -70,9 +67,8 @@ let dump = async (jobName, key, backupDirName) => {
         resp = await mysql.dump(jobConfigObj, key, backupDirName);
     } else if (dbType == 'PostgreSQL') {
         resp = await postgresql.dump(jobConfigObj, key, backupDirName);
-    } else if (dbType == 'Redis') {
-        resp = await redis.dump(jobConfigObj, key, backupDirName);
     }
+
     return resp;
 };
 
@@ -112,8 +108,6 @@ let restore = async (dbConfig, key, backupFileName) => {
         resp = await mysql.restore(dbConfig, key, backupFileName);
     } else if (dbType == 'PostgreSQL') {
         resp = await postgresql.restore(dbConfig, key, backupFileName);
-    } else if (dbType == 'redis') {
-        resp = await redis.restore(dbConfig, key, backupFileName);
     }
     return resp;
 };
