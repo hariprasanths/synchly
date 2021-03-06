@@ -16,7 +16,7 @@ let askConfig = async (jobName, key) => {
         type: 'list',
         name: 'dbType',
         message: 'Choose the type of database to backup',
-        choices: ['MongoDB', 'MySQL', 'PostgreSQL'],
+        choices: ['MongoDB', 'MySQL', 'PostgreSQL', 'Redis'],
         default: jobConfigObj.dbType || 'MongoDB',
     });
 
@@ -72,6 +72,7 @@ let askConfig = async (jobName, key) => {
             if (ans.dbType == 'MongoDB') defaultPort = '27017';
             else if (ans.dbType == 'MySQL') defaultPort = '3306';
             else if(ans.dbType == 'PostgreSQL') defaultPort = '5432';
+            else if(ans.dbType == 'Redis') defaultPort = '6379';
             return jobConfigObj.dbPort || defaultPort;
         },
         validate: function (value) {

@@ -70,6 +70,7 @@
         "omelette": "^0.4.12",
         "ora": "^4.0.4",
         "pg": "^8.5.1",
+        "redis": "^3.0.2",
         "ssh2-sftp-client": "^5.1.2"
     },
     "devDependencies": {
