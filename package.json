@@ -51,6 +51,7 @@
         "notifications",
         "mongodb",
         "mysql",
+        "postgresql",
         "google-drive",
         "sftp"
     ],
@@ -65,9 +66,10 @@
         "mongoose": "^5.9.11",
         "mysql": "^2.18.1",
         "node-cron": "^2.0.3",
-        "nodemailer": "^6.4.6",
+        "nodemailer": "^6.5.0",
         "omelette": "^0.4.12",
         "ora": "^4.0.4",
+        "pg": "^8.5.1",
         "ssh2-sftp-client": "^5.1.2"
     },
     "devDependencies": {

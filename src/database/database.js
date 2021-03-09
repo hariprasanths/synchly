@@ -2,6 +2,7 @@ const strings = require('./../utils/strings');
 const configstore = require('conf');
 const mongoDb = require('./mongoDb/mongoDb');
 const mysql = require('./mysql/mysql');
+const postgresql = require('./postgresql/postgresql');
 const inquirer = require('./inquirer');
 const ora = require('ora');
 const validator = require('./validator');
@@ -48,6 +49,8 @@ let connect = async (dbConfig) => {
         resp = await mongoDb.connect(dbConfig);
     } else if (dbConfig.dbType == 'MySQL') {
         resp = await mysql.connect(dbConfig);
+    } else if (dbConfig.dbType == 'PostgreSQL') {
+        resp = await postgresql.connect(dbConfig);
     }
     return resp;
 };
@@ -62,7 +65,10 @@ let dump = async (jobName, key, backupDirName) => {
         resp = await mongoDb.dump(jobConfigObj, key, backupDirName);
     } else if (dbType == 'MySQL') {
         resp = await mysql.dump(jobConfigObj, key, backupDirName);
+    } else if (dbType == 'PostgreSQL') {
+        resp = await postgresql.dump(jobConfigObj, key, backupDirName);
     }
+
     return resp;
 };
 
@@ -100,6 +106,8 @@ let restore = async (dbConfig, key, backupFileName) => {
         resp = await mongoDb.restore(dbConfig, key, backupFileName);
     } else if (dbType == 'MySQL') {
         resp = await mysql.restore(dbConfig, key, backupFileName);
+    } else if (dbType == 'PostgreSQL') {
+        resp = await postgresql.restore(dbConfig, key, backupFileName);
     }
     return resp;
 };

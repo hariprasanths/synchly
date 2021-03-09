@@ -43,6 +43,27 @@ $ synchly --config db
 Database configuration updated successfully.
 ```
 
+#### PostgreSQL
+
+```
+$ synchly --config db
+? Choose the type of database to backup PostgreSQL
+? Enter your database username: foo
+? Enter your database password: ***
+? Enter the database hostname: localhost
+? Enter the database server port: 5432
+? Enter the database name to backup: foobar
+? Enter the absolute path of the directory for storing local backups: /home/foobar/backups/
+? Do you want the backup files to be encrypted? Yes
+? Do you want to enable backup compression? Yes
+? Enter the time to run the backups every day: 2:30 GMT+0530
+? Enter the No. of days to persist backups for (1 backup per day): 7
+? Enter the No. of weeks to persist backups for (1 backup per week): 8
+? Enter the No. of months to persist backups for (1 backup per month): 6
+✔ Authentication success
+Database configuration updated successfully.
+```
+
 ## Cloud Storage (remote-sync) configuration
 
 #### Google Drive
