@@ -39,6 +39,7 @@ Automate database backups with customizable recurring schedules.
 * **Supported remote storages**
     * Google Drive
     * SFTP
+    * S3
 * **Status notifications** - Get daily status reports for successful and failed backups, delivered when you want them via SMTP to the specified email(s). Check [Usage](#usage) and the [List of Options](#list-of-options) below.
 * **Multiple Backup Jobs** - Run multiple backup jobs in parallel. 
 * **Encryption** - Encrypt the job configuration and backup files.
@@ -262,10 +263,11 @@ If installed using yarn global, the service init files will be located on
 * [Database configuration](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#database-configuration)
     * [MongoDB](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#mongodb)
     * [MySQL](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#mysql)
-    * [PostgreSQL] (https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#postgresql)
+    * [PostgreSQL](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#postgresql)
 * [Cloud Storage (remote-sync) configuration](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#cloud-storage-remote-sync-configuration)
     * [Google Drive](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#google-drive)
     * [SFTP](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#sftp)
+    * [S3](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#s3)
 * [Status notifications (smtp) configuration](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#status-notifications-smtp-configuration)
     * [Using Gmail](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#using-gmail)
 * [Enabling modules](https://github.com/hariprasanths/synchly/blob/master/docs/examples.md#enabling-modules)

@@ -5,6 +5,8 @@ const inquirer = require('./inquirer');
 const gDrive = require('./gDrive/gDrive');
 const gDriveInquirer = require('./gDrive/inquirer');
 const sftp = require('./sftp/sftp');
+const s3 = require('./s3/s3');
+const s3Inquirer = require('./s3/inquirer');
 const ora = require('ora');
 const validator = require('./validator');
 
@@ -36,6 +38,21 @@ const setupConfig = async (jobName, key, isDebug, filePath = undefined) => {
         } else if (config.remoteType == 'SFTP') {
             let isExists = await sftp.exists(jobName, key, config);
             connStatus.succeed('Authentication success');
+        } else if (config.remoteType == 'S3') {
+            let buckets = await s3.listBuckets(jobName, key, config);
+            connStatus.succeed('Authentication success');
+            buckets = buckets.map((b) => {
+                return {name: b.Name};
+            });
+            let s3ConfigBuck = await s3Inquirer.askRemoteBuck(buckets);
+            config = Object.assign(config, s3ConfigBuck);
+            let folders = await s3.listFolders(jobName, key, config);
+            folders = folders.map((f) => {
+                return {name: f.Name};
+            });
+            let s3ConfigLoc = await s3Inquirer.askRemoteLoc(s3ConfigBuck.s3ParentBucketId, folders);
+            config = Object.assign(config, s3ConfigLoc);
+            let cloneKeyRes = await s3.cloneServiceAccKey(jobName, key, config.s3AccKeyLoc);
         }
 
         config.remoteSetupComplete = true;
@@ -66,6 +83,8 @@ let uploadFile = async (jobName, key, fileName, filePath) => {
         resp = await gDrive.uploadFile(jobName, key, fileName, filePath);
     } else if (remoteType == 'SFTP') {
         resp = await sftp.uploadFile(jobName, key, fileName, filePath);
+    } else if (remoteType == 's3') {
+        resp = await s3.uploadFile(jobName, key, fileName, filePath);
     }
     return resp;
 };
@@ -79,6 +98,8 @@ let deleteFile = async (jobName, key, fileName) => {
         resp = await gDrive.deleteFile(jobName, key, fileName);
     } else if (remoteType == 'SFTP') {
         resp = await sftp.deleteFile(jobName, key, fileName);
+    } else if (remoteType == 's3') {
+        resp = await s3.deleteFile(jobName, key, fileName);
     }
     return resp;
 };
