@@ -32,8 +32,9 @@ $ synchly --config=db --file=/home/foo/dbConfig.json
 **/home/foo/remoteConfig.json**
 ```
 {
-    "remoteType": <remote service (Google Drive | SFTP)>,
+    "remoteType": <remote service (Google Drive | SFTP | S3)>,
     "serviceAccountKeyPath": <absolute path of service account key file (mandatory for remoteType: Google Drive)>,
+    "s3CredentialsFilePath": <absolute path of s3 credentials file (mandatory for remoteType:S3)>,
     "host": <sftp hostname or ip of remote server (mandatory for remoteType: SFTP)>,
     "port": <sftp port (mandatory for remoteType: SFTP)>,
     "username": <sftp username (mandatory for remoteType: SFTP)>,

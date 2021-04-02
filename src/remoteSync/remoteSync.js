@@ -50,7 +50,7 @@ const setupConfig = async (jobName, key, isDebug, filePath = undefined) => {
             folders = folders.map((f) => {
                 return {name: f.Name};
             });
-            let s3ConfigLoc = await s3Inquirer.askRemoteLoc(s3ConfigBuck.s3ParentBucketId, folders);
+            let s3ConfigLoc = await s3Inquirer.askRemoteLoc(s3ConfigBuck.s3ParentBucket, folders);
             config = Object.assign(config, s3ConfigLoc);
             let cloneKeyRes = await s3.cloneServiceAccKey(jobName, key, config.s3AccKeyLoc);
         }
@@ -78,12 +78,11 @@ let uploadFile = async (jobName, key, fileName, filePath) => {
     const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
     let remoteType = jobConfStore.get('remoteType');
     let resp;
-
     if (remoteType == 'Google Drive') {
         resp = await gDrive.uploadFile(jobName, key, fileName, filePath);
     } else if (remoteType == 'SFTP') {
         resp = await sftp.uploadFile(jobName, key, fileName, filePath);
-    } else if (remoteType == 's3') {
+    } else if (remoteType == 'S3') {
         resp = await s3.uploadFile(jobName, key, fileName, filePath);
     }
     return resp;
@@ -98,7 +97,7 @@ let deleteFile = async (jobName, key, fileName) => {
         resp = await gDrive.deleteFile(jobName, key, fileName);
     } else if (remoteType == 'SFTP') {
         resp = await sftp.deleteFile(jobName, key, fileName);
-    } else if (remoteType == 's3') {
+    } else if (remoteType == 'S3') {
         resp = await s3.deleteFile(jobName, key, fileName);
     }
     return resp;

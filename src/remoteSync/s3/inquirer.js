@@ -52,7 +52,7 @@ const askRemoteLoc = async (bucket, folders) => {
     let retObj = await inquirer.prompt({
         type: 'list',
         name: 's3ParentFolder',
-        message: 'Choose the remote folder in '+bucket+' in which backups will be stored:',
+        message: 'Choose the remote folder in ' + '"' + bucket + '"' + ' in which backups will be stored:',
         choices: folders,
         default: 0,
         pageSize: 4,

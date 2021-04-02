@@ -126,8 +126,8 @@ Steps to create a local sdk credentials file: </br>
 * `credentials.json` should contain two keys shown in following structure:
 ```
 {
-  aws_access_key_id : "",
-  aws_secret_access_key : ""
+  "aws_access_key_id" : "",
+  "aws_secret_access_key" : ""
 }
 ```
 * When you’re done, copy the values from aws account page to `credentials.json` file.
@@ -139,7 +139,7 @@ $ synchly --config remote-sync
 ? Enter the absolute path of the service account key file: /home/foobar/credentials.json
 ✔ Authentication success
 ? Choose the remote bucket in which backups will be stored: BucketBackup
-? Choose the remote folder in which backups will be stored: Backups
+? Choose the remote folder in "BucketBackup" in which backups will be stored: Backups
 Remote Sync configuration updated successfully.
 ```
 

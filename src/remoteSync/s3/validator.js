@@ -1,7 +1,7 @@
 const files = require('./../../utils/files');
 
 const s3ConfigKeys = {
-    s3AccKeyLoc: 's3sdkPath',
+    s3AccKeyLoc: 's3CredentialsFilePath',
 };
 
 const validateInitConfig = async (config) => {
