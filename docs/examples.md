@@ -117,6 +117,32 @@ $ synchly --config remote-sync
 Remote Sync configuration updated successfully.
 ```
 
+#### s3
+
+Synchly needs `aws_access_key_id` and `aws_secret_access_key` for authentication to use AWS s3 API.<br/>
+Steps to create a local sdk credentials file: </br>
+* Create a file named `credentials.json` in your local system.
+* Visit [this blog](https://aws.amazon.com/blogs/security/wheres-my-secret-access-key/) to know how to get `aws_access_key_id` and `aws_secret_access_key` of your aws account.
+* `credentials.json` should contain two keys shown in following structure:
+```
+{
+  "aws_access_key_id" : "",
+  "aws_secret_access_key" : ""
+}
+```
+* When you’re done, copy the values from aws account page to `credentials.json` file.
+* The absolute path of the `credentials.json` file is used in the remote-sync configuration.
+
+```
+$ synchly --config remote-sync
+? Choose the remote service: S3
+? Enter the absolute path of the service account key file: /home/foobar/credentials.json
+✔ Authentication success
+? Choose the remote bucket in which backups will be stored: BucketBackup
+? Choose the remote folder in "BucketBackup" in which backups will be stored: Backups
+Remote Sync configuration updated successfully.
+```
+
 ## Status notifications (smtp) configuration
 
 You can use any email delivery provider which supports SMTP for configuring status reports.
