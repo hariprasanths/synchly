@@ -10,6 +10,11 @@ const validateInitConfig = async (config) => {
     if (!config[gDriveConfigKeys.gDriveServiceAccKeyLoc]) {
         throw new Error(`Invalid config: Missing required field - '${gDriveConfigKeys.gDriveServiceAccKeyLoc}'`);
     }
+
+    if(process.env.USING_DOCKER) {
+        config[gDriveConfigKeys.gDriveServiceAccKeyLoc] = `/app/subsystem/${config[gDriveConfigKeys.gDriveServiceAccKeyLoc].replace("/", "")}`
+    }
+
     if (!files.directoryExists(config[gDriveConfigKeys.gDriveServiceAccKeyLoc])) {
         throw new Error(`Invalid config: No such file, '${config[gDriveConfigKeys.gDriveServiceAccKeyLoc]}'`);
     }

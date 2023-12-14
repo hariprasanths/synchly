@@ -58,7 +58,7 @@ const validateInitConfig = async (config) => {
 
     if (validatedConfig.dbType == 'PostgreSQL') {
         if (!config[dbConfigKeys.dbCert]) {
-            throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbAuthSource}'`);
+            throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbCert}'`);
         }
         validatedConfig.dbCert = config[dbConfigKeys.dbCert];
     }
@@ -73,6 +73,11 @@ const validateInitConfig = async (config) => {
     if (!config[dbConfigKeys.dbBackupPath]) {
         throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbBackupPath}'`);
     }
+
+    if(process.env.USING_DOCKER) {
+        config[dbConfigKeys.dbBackupPath] = `/app/subsystem/${config[dbConfigKeys.dbBackupPath].replace("/", "")}`
+    }
+
     if (!files.directoryExists(config[dbConfigKeys.dbBackupPath])) {
         throw new Error(`Invalid config: No such directory, '${config[dbConfigKeys.dbBackupPath]}'`);
     }

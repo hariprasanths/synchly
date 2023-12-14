@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  synchly:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /:/app/subsystem
+      - ./backups:/app/backups
+      - /run/dbus:/run/dbus
+    environment:
+      - DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/system_bus_socket
+    command: tail -f /dev/null

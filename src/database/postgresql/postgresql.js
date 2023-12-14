@@ -39,7 +39,7 @@ let connect = async (dbConfig) => {
         database: dbConfig.dbName,
         ssl: {
             rejectUnauthorized: false,
-            ca: fs.readFileSync(dbConfig.dbCert).toString()
+            ca: fs.readFileSync(process.env.USING_DOCKER ? `/app/subsystem/${dbConfig.dbCert.replace("/", "")}` : dbConfig.dbCert).toString()
         }
     });
 

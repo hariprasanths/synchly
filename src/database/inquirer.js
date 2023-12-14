@@ -119,7 +119,7 @@ let askConfig = async (jobName, key) => {
             return answers.dbType == 'PostgreSQL';
         },
     });
-
+    
     questions.push({
         name: 'dbAuthSource',
         type: 'input',
