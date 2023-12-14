@@ -17,33 +17,32 @@ let connect = async (dbConfig) => {
             authSource: dbConfig.dbAuthSource,
         },
     });
-
-    let connRes = await mongoose.connect(connectionUri, {useNewUrlParser: true, useUnifiedTopology: true});
+    let connRes = await mongoose.connect(connectionUri, { useNewUrlParser: true, useUnifiedTopology: true });
     let disConnRes = await mongoose.connection.close();
     return connRes;
 };
 
 let dump = async (dbConfig, key, backupPath) => {
     let mongoDumpCmd;
+    let connectionUri = mongoUriBuilder({
+        username: dbConfig.dbAuthUser,
+        password: dbConfig.dbAuthPwd,
+        host: dbConfig.dbHost,
+        port: dbConfig.dbPort,
+        database: dbConfig.dbName,
+        options: {
+            authSource: dbConfig.dbAuthSource,
+        },
+    });
 
     if (dbConfig.dbIsCompressionEnabled) {
         mongoDumpCmd = `mongodump \
-        --db ${dbConfig.dbName} \
-        --host ${dbConfig.dbHost} \
-        --port ${dbConfig.dbPort} \
-        --username ${dbConfig.dbAuthUser} \
-        --password ${dbConfig.dbAuthPwd} \
-        --authenticationDatabase ${dbConfig.dbAuthSource} \
+        --uri ${connectionUri} \
         --gzip \
         --archive=${backupPath}`;
     } else {
         mongoDumpCmd = `mongodump \
-        --db ${dbConfig.dbName} \
-        --host ${dbConfig.dbHost} \
-        --port ${dbConfig.dbPort} \
-        --username ${dbConfig.dbAuthUser} \
-        --password ${dbConfig.dbAuthPwd} \
-        --authenticationDatabase ${dbConfig.dbAuthSource} \
+        --uri ${connectionUri} \
         --archive=${backupPath}`;
     }
     let dbDump = await exec(mongoDumpCmd);
@@ -62,23 +61,25 @@ let restore = async (dbConfig, key, backupFilename) => {
     }
     let isCompressed = isGzip(backupFilePath);
     let mongoRestoreCmd;
+    let connectionUri = mongoUriBuilder({
+        username: dbConfig.dbAuthUser,
+        password: dbConfig.dbAuthPwd,
+        host: dbConfig.dbHost,
+        port: dbConfig.dbPort,
+        database: dbConfig.dbName,
+        options: {
+            authSource: dbConfig.dbAuthSource,
+        },
+    });
     if (isCompressed) {
         mongoRestoreCmd = `mongorestore \
-        --host ${dbConfig.dbHost} \
-        --port ${dbConfig.dbPort} \
-        --username ${dbConfig.dbAuthUser} \
-        --password ${dbConfig.dbAuthPwd} \
-        --authenticationDatabase ${dbConfig.dbAuthSource} \
+        --uri ${connectionUri} \
         --drop \
         --gzip \
         --archive=${backupFilePath}`;
     } else {
         mongoRestoreCmd = `mongorestore \
-        --host ${dbConfig.dbHost} \
-        --port ${dbConfig.dbPort} \
-        --username ${dbConfig.dbAuthUser} \
-        --password ${dbConfig.dbAuthPwd} \
-        --authenticationDatabase ${dbConfig.dbAuthSource} \
+        --uri ${connectionUri} \
         --drop \
         --archive=${backupFilePath}`;
     }

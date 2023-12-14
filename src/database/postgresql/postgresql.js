@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+const fs = require('fs');
 const exec = require('./../../utils/await-exec');
 const isGzip = require('./../../utils/isGzip');
 const files = require('./../../utils/files');
@@ -36,6 +37,10 @@ let connect = async (dbConfig) => {
         host: dbConfig.dbHost,
         port: dbConfig.dbPort,
         database: dbConfig.dbName,
+        ssl: {
+            rejectUnauthorized: false,
+            ca: fs.readFileSync(dbConfig.dbCert).toString()
+        }
     });
 
     const connRes = await awaitPostgresqlConnect(connection);
@@ -46,7 +51,7 @@ let connect = async (dbConfig) => {
 
 let dump = async (dbConfig, key, backupPath) => {
     const postgresqlDumpCmd = `pg_dump --dbname=postgresql://${dbConfig.dbAuthUser}:${dbConfig.dbAuthPwd}@${dbConfig.dbHost}:${dbConfig.dbPort}/${dbConfig.dbName} \
-    --compress=0..9 \
+    --compress=${dbConfig.dbIsCompressionEnabled ? 3 : 0} \
     --format=c \
     > ${backupPath}`;
 

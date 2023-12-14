@@ -7,6 +7,7 @@ const dbConfigKeys = {
     dbHost: 'host',
     dbPort: 'port',
     dbName: 'databaseName',
+    dbCert: 'databaseCertificate',
     dbAuthSource: 'authSource',
     dbBackupPath: 'backupPath',
     dbIsCompressionEnabled: 'enableCompression',
@@ -54,6 +55,13 @@ const validateInitConfig = async (config) => {
         throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbName}'`);
     }
     validatedConfig.dbName = config[dbConfigKeys.dbName];
+
+    if (validatedConfig.dbType == 'PostgreSQL') {
+        if (!config[dbConfigKeys.dbCert]) {
+            throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbAuthSource}'`);
+        }
+        validatedConfig.dbCert = config[dbConfigKeys.dbCert];
+    }
 
     if (validatedConfig.dbType == 'MongoDB') {
         if (!config[dbConfigKeys.dbAuthSource]) {

@@ -13,6 +13,7 @@ For initializing a module configuration using a file, you'll need a JSON file of
     "host": <database hostname>,
     "port": <database server port>,
     "databaseName": <database name>,
+    "databaseCertificate": <absolute path of .crt file, mandatory for databaseType: PostgreSQL>
     "authSource": <database authSource (mandatory for databaseType: MongoDB)>,
     "backupPath": <absolute path of the directory for storing local backups>,
     "enableCompression": <boolean to enable backup compression (true | false)>,
