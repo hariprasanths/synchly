@@ -101,6 +101,26 @@ let askConfig = async (jobName, key) => {
     });
 
     questions.push({
+        name: 'dbCert',
+        type: 'input',
+        message: 'Enter the absolute path of the certificate file:',
+        validate: function (value) {
+            if (value.length) {
+                let isFile = files.isFile(value);
+                if (!isFile) {
+                    return `'${value}' is not a file.`;
+                }
+                return true;
+            } else {
+                return 'Please enter the absolute path of the certificate file.';
+            }
+        },
+        when: function (answers) {
+            return answers.dbType == 'PostgreSQL';
+        },
+    });
+
+    questions.push({
         name: 'dbAuthSource',
         type: 'input',
         message: 'Enter the database name associated with the user credentials (i.e. authSource):',

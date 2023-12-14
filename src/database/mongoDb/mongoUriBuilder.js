@@ -9,7 +9,7 @@ module.exports = function (config) {
     config = Object.assign({}, defaults, config);
 
     // Schema
-    let uri = 'mongodb://';
+    let uri = 'mongodb+srv://';
 
     if (config.username || config.user) {
         uri += config.username || config.user;
@@ -27,9 +27,9 @@ module.exports = function (config) {
     uri += config.host;
 
     // Port
-    if (config.port) {
-        uri += ':' + config.port;
-    }
+    // if (config.port) {
+    //     uri += ':' + config.port;
+    // }
 
     // Replicas
     if (config.replicas) {
