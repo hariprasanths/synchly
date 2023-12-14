@@ -7,6 +7,7 @@ const dbConfigKeys = {
     dbHost: 'host',
     dbPort: 'port',
     dbName: 'databaseName',
+    dbCert: 'databaseCertificate',
     dbAuthSource: 'authSource',
     dbBackupPath: 'backupPath',
     dbIsCompressionEnabled: 'enableCompression',
@@ -55,6 +56,13 @@ const validateInitConfig = async (config) => {
     }
     validatedConfig.dbName = config[dbConfigKeys.dbName];
 
+    if (validatedConfig.dbType == 'PostgreSQL') {
+        if (!config[dbConfigKeys.dbCert]) {
+            throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbCert}'`);
+        }
+        validatedConfig.dbCert = config[dbConfigKeys.dbCert];
+    }
+
     if (validatedConfig.dbType == 'MongoDB') {
         if (!config[dbConfigKeys.dbAuthSource]) {
             throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbAuthSource}'`);
@@ -65,6 +73,11 @@ const validateInitConfig = async (config) => {
     if (!config[dbConfigKeys.dbBackupPath]) {
         throw new Error(`Invalid config: Missing required field - '${dbConfigKeys.dbBackupPath}'`);
     }
+
+    if(process.env.USING_DOCKER) {
+        config[dbConfigKeys.dbBackupPath] = `/app/subsystem/${config[dbConfigKeys.dbBackupPath].replace("/", "")}`
+    }
+
     if (!files.directoryExists(config[dbConfigKeys.dbBackupPath])) {
         throw new Error(`Invalid config: No such directory, '${config[dbConfigKeys.dbBackupPath]}'`);
     }

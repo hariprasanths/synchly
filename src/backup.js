@@ -169,7 +169,7 @@ let instantBackup = async (jobName, key, isDebug) => {
         instantBackupStatus.fail('Failed');
         if (isDebug) {
             console.error('Stacktrace:');
-            console.error(error);
+            console.error(err);
         } else {
             console.error(strings.debugModeDesc);
         }

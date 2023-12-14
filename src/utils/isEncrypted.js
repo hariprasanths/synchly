@@ -3,7 +3,7 @@ const strings = require('./strings');
 const string = require('./strings');
 let readData = async (fileName) => {
     const chunks = [];
-    const readStream = fs.createReadStream(fileName, {start: 0, end: 3});
+    const readStream = fs.createReadStream(fileName, { start: 0, end: 3 });
     let promise = new Promise((resolve, reject) => {
         readStream.on('error', () => {
             reject();
@@ -27,6 +27,16 @@ let isEncrypted = async (fileName) => {
     }
 };
 
+let isKeytarSupported = async () => {
+    try {
+        await keytar.getPassword(strings.serviceName, strings.accountName);
+        return true;
+    } catch (err) {
+        return false;
+    }
+};
+
 module.exports = {
     isEncrypted,
+    isKeytarSupported,
 };

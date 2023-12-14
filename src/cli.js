@@ -13,6 +13,7 @@ const utils = require('./utils/utils');
 const cipher = require('./cipher/cipher');
 const keytar = require('keytar');
 const backupDb = require('./backup');
+const { isKeytarSupported } = require('./utils/isEncrypted');
 
 const defaultJobName = 'master';
 
@@ -97,10 +98,16 @@ const cli = async (args) => {
             console.log(strings.helpDesc);
             return;
         }
-        const key = await keytar.getPassword(strings.serviceName, strings.accountName);
+        
+        const keytarSupported = await isKeytarSupported();
+        const key = keytarSupported ?
+            await keytar.getPassword(strings.serviceName, strings.accountName)
+            :
+            null;
+
         const confStore = new configstore();
         const jobName = options.job || defaultJobName;
-        let jobConfStore = new configstore({configName: jobName, encryptionKey: key});
+        let jobConfStore = new configstore({ configName: jobName, encryptionKey: key });
         const jobConfigObj = jobConfStore.store;
 
         if (options.reset) {
@@ -145,6 +152,11 @@ const cli = async (args) => {
                 console.error(`Allowed arguments are ${configAllowedArgs}`);
             }
         }
+
+        if(options.file && process.env.USING_DOCKER) {
+            options.file = `/app/subsystem/${options.file.replace("/", "")}`
+        }
+
         if (!options.config && options.file) {
             console.error(strings.fileWoConfigArg);
             return;
@@ -307,7 +319,7 @@ const cli = async (args) => {
 
 const enableJob = async (jobName, key, isDebug) => {
     const confStore = new configstore();
-    const jobConfStore = new configstore({configName: jobName, encryptionKey: key});
+    const jobConfStore = new configstore({ configName: jobName, encryptionKey: key });
     const jobConfigObj = jobConfStore.store;
 
     if (!jobConfigObj.dbSetupComplete) {
@@ -337,7 +349,7 @@ const printJobsList = (key) => {
         if (currentJob == 'isEncrypted') {
             continue;
         }
-        const jobConfStore = new configstore({configName: currentJob, encryptionKey: key});
+        const jobConfStore = new configstore({ configName: currentJob, encryptionKey: key });
         const jobConfObj = jobConfStore.store;
         const currJobStatus = jobNamesConfig[currentJob].enabled == true ? statusEnabled : statusDisabled;
         const remoteSyncStatus = jobConfObj.remoteSyncEnabled == true ? statusEnabled : statusDisabled;

@@ -3,10 +3,16 @@ const configstore = require('conf');
 const inquirer = require('./inquirer');
 const ora = require('ora');
 const strings = require('../utils/strings');
+const { isKeytarSupported } = require('../utils/isEncrypted');
 const setupConfig = async (isDebug) => {
     let secureConfig;
     const confStore = new configstore();
     const config = confStore.store;
+    const keytarSupported = await isKeytarSupported();
+    if (!keytarSupported) {
+        console.error('Encryption is not supported on this system');
+        return;
+    }
     let setupConfigStatus = ora('Encrypting the configurations, please wait...');
     try {
         secureConfig = await inquirer.askConfig();
@@ -30,8 +36,12 @@ const setupConfig = async (isDebug) => {
 };
 
 const enableConfig = async (config) => {
+    const keytarSupported = await isKeytarSupported();
+    if (!keytarSupported) {
+        console.error('Encryption is not supported on this system');
+        return;
+    }
     let key;
-
     key = await keytar.getPassword(strings.serviceName, strings.accountName);
     for (let currentJob in config) {
         if (currentJob == 'isEncrypted') {
@@ -45,6 +55,11 @@ const enableConfig = async (config) => {
 };
 
 const deleteConfig = async (key) => {
+    const keytarSupported = await isKeytarSupported();
+    if (!keytarSupported) {
+        console.error('Encryption is not supported on this system');
+        return;
+    }
     let confStore = new configstore();
     let config = confStore.store;
     let deleteConfigStatus = ora('Decrypting the configurations, please wait...');

@@ -10,6 +10,11 @@ const validateInitConfig = async (config) => {
     if (!config[s3ConfigKeys.s3AccKeyLoc]) {
         throw new Error(`Invalid config: Missing required field - '${s3ConfigKeys.s3AccKeyLoc}'`);
     }
+
+    if(process.env.USING_DOCKER) {
+        config[s3ConfigKeys.s3AccKeyLoc] = `/app/subsystem/${config[s3ConfigKeys.s3AccKeyLoc].replace("/", "")}`
+    }
+
     if (!files.directoryExists(config[s3ConfigKeys.s3AccKeyLoc])) {
         throw new Error(`Invalid config: No such file, '${config[s3ConfigKeys.s3AccKeyLoc]}'`);
     }
